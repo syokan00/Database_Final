@@ -1,0 +1,223 @@
+{
+    "common": {
+    "loginRequired": "ログインが必要です",
+        "appName": "MemoLucky",
+        "slogan": "Lucky for you — あなたに届く、誰かの経験。",
+        "login": "ログイン",
+        "register": "新規登録",
+        "logout": "ログアウト",
+        "search": "検索...",
+        "post": "投稿する",
+        "cancel": "キャンセル",
+        "save": "保存",
+        "delete": "削除",
+        "edit": "編集",
+        "more": "その他",
+        "deleteConfirm": "本当に削除しますか？",
+        "linkCopied": "リンクをコピーしました！",
+        "uploadFailed": "アップロードに失敗しました",
+        "deleteFailed": "削除に失敗しました",
+        "follow": "フォロー",
+        "following": "フォロー中",
+        "featureInDev": "この機能は開発中です",
+        "likeFailed": "いいねに失敗しました",
+        "favoriteFailed": "お気に入りに失敗しました",
+        "followFailed": "フォローに失敗しました",
+        "email": "メールアドレス",
+        "password": "パスワード"
+    },
+    "nav": {
+        "home": "ホーム",
+        "notes": "経験談",
+        "items": "フリマ",
+        "labs": "研究室",
+        "jobs": "就活",
+        "badges": "バッジ",
+        "profile": "マイページ"
+    },
+    "home": {
+        "heroTitle": "キャンパスライフを、もっと幸運に。",
+        "heroSubtitle": "先輩たちのリアルな経験談、ここだけの話。",
+        "latestPosts": "新着の投稿",
+        "popularPosts": "人気の投稿"
+    },
+    "post": {
+        "createTitle": "経験をシェアする",
+        "titlePlaceholder": "タイトル（例：〇〇研究室のリアル）",
+        "contentPlaceholder": "ここに経験を書きましょう...",
+        "tags": "タグ",
+        "category": "カテゴリー",
+        "anonymous": "匿名で投稿",
+        "restrictions": "今日の制限",
+        "titleAndContentRequired": "タイトルと内容を入力してください。",
+        "postSuccess": "投稿しました！",
+        "postFailed": "投稿に失敗しました。"
+    },
+    "badge": {
+        "collection": "バッジコレクション",
+        "no": "バッジ No.",
+        "acquired": "取得日",
+        "owner": "取得者",
+        "condition": "獲得条件",
+        "description": "説明",
+        "close": "閉じる"
+    },
+    "badgesList": {
+        "first_post": {
+            "title": "初投稿",
+            "condition": "最初の投稿をする",
+            "description": "おめでとう！シェアへの第一歩を踏み出しました！"
+        },
+        "night_owl": {
+            "title": "深夜の秀才",
+            "condition": "0:00-6:00に投稿する",
+            "description": "深夜も頑張るあなたは、夜更かしの秀才！"
+        },
+        "streak_poster": {
+            "title": "継続の達人",
+            "condition": "5日間連続で投稿する",
+            "description": "継続は力なり。シェアの達人！"
+        },
+        "polyglot": {
+            "title": "マルチリンガル",
+            "condition": "多言語で投稿する",
+            "description": "言葉の壁を超えたシェア！"
+        },
+        "heart_collector": {
+            "title": "人気者",
+            "condition": "いいねを10回もらう",
+            "description": "あなたの投稿はみんなに愛されています！"
+        },
+        "comment_king": {
+            "title": "コメント王",
+            "condition": "20回コメントする",
+            "description": "交流の達人、ここにあり！"
+        },
+        "helpful_friend": {
+            "title": "助け合いの星",
+            "condition": "コメントにいいねを5回もらう",
+            "description": "あなたのアドバイスが誰かを助けました！"
+        },
+        "smart_buyer": {
+            "title": "買い物上手",
+            "condition": "中古本を3冊購入する",
+            "description": "賢い買い物をしましたね！"
+        },
+        "top_seller": {
+            "title": "トップセラー",
+            "condition": "本を5冊売る",
+            "description": "フリマの才能あり！"
+        },
+        "treasure_hunter": {
+            "title": "トレジャーハンター",
+            "condition": "レアな本を見つける",
+            "description": "お宝発見！コレクターの魂！"
+        },
+        "lucky_clover": {
+            "title": "ラッキークローバー",
+            "condition": "ランダムなタスクを完了",
+            "description": "幸運が訪れました！一緒に学びましょう！"
+        },
+        "heart_artist": {
+            "title": "ハートアーティスト",
+            "condition": "いいねエフェクトを10回使う",
+            "description": "いいねも美しく！"
+        },
+        "brave_beginner": {
+            "title": "勇者の一歩",
+            "condition": "初回ログイン",
+            "description": "新しい世界へようこそ！"
+        },
+        "lost_scholar": {
+            "title": "迷える学者",
+            "condition": "全ページを閲覧",
+            "description": "迷い道もまた学びの道！"
+        }
+    },
+    "user": {
+        "loginToInteract": "ログインしてアクション",
+        "like": "いいね",
+        "comment": "コメント",
+        "share": "シェア",
+        "favorite": "お気に入り",
+        "unfavorite": "お気に入り解除",
+        "profileIncomplete": "プロフィールを完成させよう"
+    },
+    "restrictions": {
+        "noKanji": "禁止汉字",
+        "emojiOnly": "絵文字のみ",
+        "charLimit": "文字数制限",
+        "forbiddenWord": "禁止ワード",
+        "mustEmoji": "絵文字必須",
+        "noDesuMasu": "です・ます禁止",
+        "kansaiBen": "関西弁必須",
+        "mustEndExclamation": "末尾に「！！！」必須",
+        "mustEndWan": "文末に「ワン」必須"
+    },
+    "favorites": {
+        "myFavorites": "お気に入り",
+        "noFavorites": "お気に入りがありません",
+        "addToFavorites": "お気に入りに追加",
+        "removeFromFavorites": "お気に入りから削除"
+    },
+    "profile": {
+        "myPosts": "マイ投稿",
+        "liked": "いいねした投稿",
+        "myItems": "マイアイテム",
+        "badges": "バッジ",
+        "noPostsYet": "まだ投稿がありません",
+        "createPost": "投稿を作成",
+        "noLikedPostsYet": "いいねした投稿はまだありません",
+        "noItemsYet": "まだアイテムがありません",
+        "viewAllBadges": "すべてのバッジを見る",
+        "posts": "投稿",
+        "likes": "いいね",
+        "badgesLabel": "バッジ",
+
+        "changeCover": "背景を変更",
+        "settingsTitle": "設定",
+        "profileSectionTitle": "プロフィール",
+        "nicknameLabel": "ニックネーム",
+        "majorLabel": "専攻",
+        "yearLabel": "入学年",
+        "gradeLabel": "学年",
+        "bioLabel": "自己紹介",
+        "saveProfile": "プロフィールを保存",
+        "profileSaved": "プロフィールを更新しました",
+        "profileSaveFailed": "プロフィールの更新に失敗しました",
+        "passwordSectionTitle": "パスワード変更",
+        "oldPasswordLabel": "現在のパスワード",
+        "newPasswordLabel": "新しいパスワード",
+        "updatePassword": "更新",
+        "passwordUpdated": "パスワードを更新しました",
+        "passwordUpdateFailed": "パスワードの更新に失敗しました",
+        "close": "閉じる",
+        "pleaseLoginTitle": "ログインしてください"
+    },
+    "items": {
+        "contact": "連絡する",
+        "call": "電話",
+        "video": "ビデオ",
+        "noPhone": "電話番号が登録されていません",
+        "noVideo": "ビデオリンクが登録されていません",
+        "videoCall": "ビデオ通話",
+        "voiceCall": "音声通話",
+        "message": "メッセージ",
+        "copyLink": "リンクをコピー",
+        "report": "報告",
+        "reportConfirm": "この商品を報告しますか？",
+        "reportReceived": "報告を受け付けました。",
+        "sellTitle": "アイテムを出品する",
+        "sellSuccess": "出品しました！",
+        "sellFailed": "出品に失敗しました",
+        "statusSelling": "募集中",
+        "statusNegotiating": "交渉中"
+    },
+    "postCard": {
+        "commentPosted": "コメントを投稿しました！",
+        "commentPostFailed": "コメントの投稿に失敗しました",
+        "deleteCommentConfirm": "このコメントを削除しますか？",
+        "commentDeleted": "コメントを削除しました",
+        "commentDeleteFailed": "削除に失敗しました"
+    }
+}

@@ -1,0 +1,410 @@
+.post-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.post-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.category-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    display: inline-block;
+}
+
+.tag-lab {
+    background-color: #ECFDF5;
+    color: #059669;
+}
+
+.tag-job {
+    background-color: #EFF6FF;
+    color: #2563EB;
+}
+
+.tag-class {
+    background-color: #FFF7ED;
+    color: #EA580C;
+}
+
+.tag-other {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.post-meta-simple {
+    display: flex;
+    gap: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+    align-items: center;
+}
+
+.author-name {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.post-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.8rem;
+    line-height: 1.4;
+    color: var(--text-main);
+}
+
+.post-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0 0 1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.post-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+/* File Attachments in Post Card */
+.post-attachments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.post-image:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.post-tags-simple {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.hash-tag {
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    background: #F0FDF4;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: var(--bg-card) !important;
+    border: 2px solid var(--border-light) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-main) !important;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-lg);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    min-height: 44px;
+    height: 44px;
+    justify-content: center;
+    line-height: 1;
+    visibility: visible;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.action-btn:hover:not(:disabled) {
+    background: var(--bg-glass) !important;
+    color: var(--color-primary) !important;
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary) !important;
+}
+
+.action-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn.liked {
+    color: var(--color-error) !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: var(--color-error) !important;
+    opacity: 1;
+    font-weight: 700;
+}
+
+.action-btn.liked:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: var(--color-error) !important;
+    color: var(--color-error) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
+}
+
+.action-btn.favorited {
+    color: var(--color-warning) !important;
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: var(--color-warning) !important;
+    opacity: 1;
+    font-weight: 700;
+}
+
+.action-btn.favorited:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.15) !important;
+    border-color: var(--color-warning) !important;
+    color: var(--color-warning) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25) !important;
+}
+
+.action-btn svg {
+    flex-shrink: 0;
+    stroke-width: 2.5;
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+}
+
+.action-btn span {
+    font-weight: 600;
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    pointer-events: none;
+}
+
+/* Make sure buttons are interactive */
+.action-btn:not(:disabled) {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.action-btn:not(:disabled):active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+    color: #94A3B8;
+    pointer-events: none;
+}
+
+.action-btn:disabled:hover {
+    transform: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure buttons are always clickable when user is logged in */
+.action-btn[style*="cursor: pointer"] {
+    pointer-events: auto;
+}
+
+.action-btn.favorited {
+    color: #F59E0B;
+    opacity: 1;
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-btn:not(:disabled):hover {
+    background: #F1F5F9;
+    color: var(--color-primary);
+    opacity: 1;
+}
+
+.icon-btn-small {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.icon-btn-small:hover {
+    color: #EF4444;
+    background: #FEF2F2;
+}
+
+/* Comments */
+.comments-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-light);
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    position: relative;
+}
+
+.comment-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.comment-item:hover .comment-delete-btn {
+    opacity: 1;
+}
+
+.comment-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.comment-avatar {
+    flex-shrink: 0;
+}
+
+.comment-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-main);
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.comment-text {
+    font-size: 0.875rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.comment-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.comment-input-wrapper input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-light);
+    font-size: 0.9rem;
+}
+
+.btn-send {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-send:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-send:disabled {
+    background: var(--border-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+}

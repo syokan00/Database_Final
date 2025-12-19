@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.env.local
+.env.*.local
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Docker
+docker-data/
+
+# 临时文件
+*.tmp
+*.temp
+
+# 证书和密钥
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+id_rsa
+id

@@ -1,0 +1,118 @@
+.file-attachment {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    border-left: 3px solid #3b82f6;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.file-attachment:hover {
+    background: var(--bg-glass);
+    transform: translateX(2px);
+}
+
+.file-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.file-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.file-category {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.file-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.file-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.file-action-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+}
+
+.file-action-btn.download {
+    color: #10b981;
+}
+
+.file-action-btn.remove {
+    color: #ef4444;
+}
+
+.file-action-btn.remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .file-attachment {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .file-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .file-name {
+        font-size: 13px;
+    }
+
+    .file-meta {
+        font-size: 11px;
+    }
+
+    .file-action-btn {
+        width: 28px;
+        height: 28px;
+    }
+}
+

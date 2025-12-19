@@ -1,0 +1,142 @@
+.pwa-install-prompt {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    max-width: 500px;
+    width: calc(100% - 40px);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.pwa-prompt-content {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95));
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pwa-prompt-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.pwa-prompt-text {
+    flex: 1;
+    color: white;
+}
+
+.pwa-prompt-text h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.pwa-prompt-text p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.pwa-prompt-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pwa-btn {
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pwa-btn-primary {
+    background: white;
+    color: #059669;
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+.pwa-btn-primary:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+
+.pwa-btn-dismiss {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+}
+
+.pwa-btn-dismiss:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .pwa-install-prompt {
+        bottom: 80px; /* 避免被底部导航栏遮挡 */
+        width: calc(100% - 32px);
+    }
+
+    .pwa-prompt-content {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .pwa-prompt-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .pwa-prompt-text h3 {
+        font-size: 14px;
+    }
+
+    .pwa-prompt-text p {
+        font-size: 12px;
+    }
+
+    .pwa-btn-primary {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+
+/* iOS Safari 特殊样式 */
+@supports (-webkit-touch-callout: none) {
+    .pwa-install-prompt {
+        bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+}
+
