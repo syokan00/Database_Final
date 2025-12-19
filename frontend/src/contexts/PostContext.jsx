@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import client from '../api/client';
 import { useAuth } from './AuthContext';
 import { useLanguage } from './LanguageContext';
+import { mockPosts, mockItems } from '../data/mockData';
 
 const PostContext = createContext();
 
@@ -36,6 +37,9 @@ export const PostProvider = ({ children }) => {
         } catch (error) {
             console.error("Failed to fetch posts", error);
             console.error("Error details:", error.response?.data);
+            // 如果 API 失败，使用模拟数据（用于演示）
+            console.log("Using mock data for demonstration");
+            setPosts(mockPosts);
         }
     };
 
@@ -45,6 +49,9 @@ export const PostProvider = ({ children }) => {
             setItems(res.data);
         } catch (error) {
             console.error("Failed to fetch items", error);
+            // 如果 API 失败，使用模拟数据（用于演示）
+            console.log("Using mock items for demonstration");
+            setItems(mockItems);
         }
     };
 
