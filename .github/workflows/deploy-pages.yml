@@ -38,7 +38,8 @@ jobs:
         env:
           # 在 GitHub 仓库 Settings -> Secrets and variables -> Actions -> Variables 里配置 VITE_API_URL
           # 例如: https://your-backend.example.com/api
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          # 如果未设置，使用空字符串（前端会使用默认值）
+          VITE_API_URL: ${{ vars.VITE_API_URL || '' }}
         run: npm run build
 
       - name: Upload artifact
