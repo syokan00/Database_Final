@@ -3,7 +3,6 @@ import { Search, Filter, BookOpen } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePosts } from '../contexts/PostContext';
 import PostCard from '../components/PostCard';
-import { samplePosts } from '../data/samplePosts';
 import { useLocation } from 'react-router-dom';
 import './NotesPage.css';
 
@@ -23,9 +22,8 @@ const NotesPage = () => {
     }, [location.state]);
 
     useEffect(() => {
-        // Use sample posts if no posts from API
-        const allPosts = posts.length > 0 ? posts : samplePosts;
-        const filtered = allPosts.filter(p => {
+        // Filter posts from API
+        const filtered = posts.filter(p => {
             if (filter === 'all') return p.category !== 'items';
             return p.category === filter;
         });
