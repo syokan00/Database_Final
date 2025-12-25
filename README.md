@@ -90,7 +90,6 @@ cd Database_Final
 ### 2. バックエンドのセットアップ
 
 #### 環境変数の設定 
-詳細は [環境変数の設定方法.md](環境変数の設定方法.md) を参照してください。
 ```bash
 cd backend
 cp .env.example .env
@@ -102,12 +101,7 @@ cp .env.example .env
 # プロジェクトルートで実行
 docker-compose up -d
 ```
-
-これにより、以下のコンテナが起動します：
-- PostgreSQL（ポート 5432）
-- MinIO（ポート 9000, 9001）
-- Redis（ポート 6379）
-- FastAPI（ポート 8000）
+ `http://localhost:3000` で起動します。
 
 ### 3. フロントエンドのセットアップ
 
@@ -164,8 +158,8 @@ Database_Final/
 │   ├── Infra/           # インフラ関連
 │   └── PM/              # プロジェクトマネージャー関連
 ├── docker-compose.yml   # Docker Compose 設定
-├──  README.md            # このファイル
-└── 環境変数の設定方法.md
+└── README.md            # このファイル
+
 ```
 
 ##  ドキュメント
