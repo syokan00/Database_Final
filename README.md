@@ -89,7 +89,8 @@ cd Database_Final
 
 ### 2. バックエンドのセットアップ
 
-#### 環境変数の設定
+#### 環境変数の設定 
+詳細は [環境変数の設定方法.md](環境変数の設定方法.md) を参照してください。
 ```bash
 cd backend
 cp .env.example .env
@@ -163,7 +164,8 @@ Database_Final/
 │   ├── Infra/           # インフラ関連
 │   └── PM/              # プロジェクトマネージャー関連
 ├── docker-compose.yml   # Docker Compose 設定
-└── README.md            # このファイル
+├──  README.md            # このファイル
+└── 環境変数の設定方法.md
 ```
 
 ## 📚 ドキュメント
@@ -194,44 +196,7 @@ Database_Final/
 ### インフラ
 - [デプロイメント](docs/Infra/deployment.md)
 
-## 🎯 課題要求との対応
-
-本プロジェクトは、データベース最終課題の要件を満たすように設計されています。
-
-### Business Analyst（BA）
-- ✅ ペルソナ定義
-- ✅ モチベーショングラフ
-- ✅ ストーリーボード
-- ✅ UI モック
-
-### Architect（アーキテクト）
-- ✅ システムアーキテクチャ図
-- ✅ RPO/RTO 定義
-- ✅ DR/バックアップ戦略
-- ✅ パフォーマンス指標
-
-### DBA（データベース管理者）
-- ✅ ER 図
-- ✅ データベース設計
-- ✅ DDL/DML の実装
-
-### Infra（インフラエンジニア）
-- ✅ デプロイメント環境の構築
-- ✅ GitHub リポジトリとブランチの構築
-- ✅ デプロイメントドキュメント
-
-### Application（アプリケーションエンジニア）
-- ✅ フロントエンド実装（React）
-- ✅ バックエンド実装（FastAPI）
-- ✅ データベース接続（SQLAlchemy）
-- ✅ RESTful API の実装
-
-### PM（プロジェクトマネージャー）
-- ✅ アプリケーション概要
-- ✅ プロジェクト報告書
-- ✅ GitHub Kanban Project の管理
-
-## 🔒 セキュリティ
+## セキュリティ
 
 - パスワードは Argon2 でハッシュ化
 - JWT トークンベースの認証
@@ -239,20 +204,20 @@ Database_Final/
 - レート制限（Redis を使用）
 - SQL インジェクション対策（SQLAlchemy ORM）
 
-## 📝 ライセンス
+## ライセンス
 
 このプロジェクトは教育目的で作成されました。
 
-## 👥 コントリビューター
+## コントリビューター
 
 - [syokan00](https://github.com/syokan00)
 
-## 🔗 リンク
+##  リンク
 
 - **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
 - **デプロイ先**: https://syokan00.github.io/Database_Final/
 
-## 📞 お問い合わせ
+## お問い合わせ
 
 プロジェクトに関する質問や提案は、GitHub の Issues までお願いします。
 
