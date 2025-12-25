@@ -87,26 +87,50 @@ git clone https://github.com/syokan00/Database_Final.git
 cd Database_Final
 ```
 
-### 2. バックエンドのセットアップ
+### 2. バックエンドのセットアップ ⚠️ 重要
 
-#### 環境変数の設定
+**注意**: バックエンドサービスが起動していないと、ログイン・登録ができません。
+
+#### 環境変数の設定（オプション）
+
+**重要**: Docker Compose を使用する場合、`.env` ファイルは**作成する必要がありません**。
+
+もし手動で設定したい場合のみ：
+
+**Windows**:
 ```bash
 cd backend
-cp .env.example .env
-# .env ファイルを編集して必要な環境変数を設定
+copy env.example .env
 ```
 
-#### Docker Compose の起動
+**Linux/Mac**:
+```bash
+cd backend
+cp env.example .env
+```
+
+#### Docker Compose の起動（必須）
 ```bash
 # プロジェクトルートで実行
 docker-compose up -d
 ```
 
 これにより、以下のコンテナが起動します：
-- PostgreSQL（ポート 5432）
-- MinIO（ポート 9000, 9001）
-- Redis（ポート 6379）
-- FastAPI（ポート 8000）
+- PostgreSQL（ポート 5433）
+- Redis（ポート 6380）
+- MinIO（ポート 9002, 9003）
+- LibreTranslate（ポート 5000）
+- FastAPI バックエンド（ポート 8001）⚠️ これがないとログインできません
+- Celery（バックグラウンドタスク）
+
+**起動確認**:
+```bash
+# コンテナの状態を確認
+docker-compose ps
+
+# バックエンド API が応答するか確認（ブラウザで開く）
+# http://localhost:8001/api/docs
+```
 
 ### 3. フロントエンドのセットアップ
 
@@ -122,6 +146,19 @@ npm run dev
 ```
 
 開発サーバーは `http://localhost:5173` で起動します。
+
+### ⚠️ ログインに失敗する場合
+
+"Registration failed" または "ログインに失敗しました" というエラーが表示される場合：
+
+1. **Docker Desktop が起動しているか確認**
+2. **バックエンドサービスが起動しているか確認**:
+   ```bash
+   docker-compose ps
+   ```
+3. **バックエンド API にアクセスできるか確認**:
+   ブラウザで `http://localhost:8001/api/docs` を開く
+4. **詳細なトラブルシューティング**: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) を参照
 
 ## 🌐 デプロイメント
 
