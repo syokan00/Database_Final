@@ -36,6 +36,7 @@ docker-data/
 # 临时文件
 *.tmp
 *.temp
+*.zip
 
 # 证书和密钥
 *.pem
