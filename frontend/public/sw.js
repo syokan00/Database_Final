@@ -50,35 +50,80 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 跳过API请求（总是从网络获取）
+  // 先检查URL，跳过外部资源和不支持的协议
+  let url;
+  try {
+    url = new URL(event.request.url);
+  } catch (e) {
+    // 无效的URL，让浏览器处理
+    return;
+  }
+
+  // 跳过不支持的请求协议（如 chrome-extension）
+  if (url.protocol === 'chrome-extension:' || url.protocol === 'chrome:' || url.protocol === 'moz-extension:') {
+    return;
+  }
+
+  // 跳过外部资源（如 via.placeholder.com），让浏览器直接处理
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 跳过API请求（总是从网络获取，不缓存）
   if (event.request.url.includes('/api/')) {
     return;
   }
 
+  // 只处理同源请求
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // 克隆响应
-        const responseToCache = response.clone();
-        
-        // 更新缓存
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+        // 只缓存成功的响应
+        if (response && response.status === 200 && response.type === 'basic') {
+          // 克隆响应
+          const responseToCache = response.clone();
+          
+          // 更新缓存（只缓存同源请求）
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache).catch((err) => {
+              console.log('[SW] Cache put failed:', err);
+            });
+          });
+        }
         
         return response;
       })
-      .catch(() => {
+      .catch((error) => {
         // 网络失败时从缓存获取
-        return caches.match(event.request).then((response) => {
-          if (response) {
-            return response;
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
           }
           
-          // 如果缓存也没有，返回离线页面
+          // 如果缓存也没有，返回离线页面（仅对导航请求）
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('/index.html').then((htmlResponse) => {
+              return htmlResponse || new Response('Offline', { 
+                status: 503, 
+                statusText: 'Service Unavailable',
+                headers: { 'Content-Type': 'text/html' }
+              });
+            });
           }
+          
+          // 对于其他请求，返回一个错误响应
+          return new Response('Network error', { 
+            status: 408, 
+            statusText: 'Request Timeout',
+            headers: { 'Content-Type': 'text/plain' }
+          });
+        }).catch(() => {
+          // 如果缓存匹配也失败，返回一个基本的错误响应
+          return new Response('Service Unavailable', { 
+            status: 503, 
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' }
+          });
         });
       })
   );

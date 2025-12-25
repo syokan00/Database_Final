@@ -37,9 +37,15 @@ export const PostProvider = ({ children }) => {
         } catch (error) {
             console.error("Failed to fetch posts", error);
             console.error("Error details:", error.response?.data);
-            // 如果 API 失败，使用模拟数据（用于演示）
-            console.log("Using mock data for demonstration");
-            setPosts(mockPosts);
+            // 開発環境のみ：API 失敗時にモックデータを使用（デモ用）
+            // 本番環境では空配列を返す（エラーはそのまま表示）
+            if (import.meta.env.DEV) {
+                console.log("Using mock data for demonstration");
+                setPosts(mockPosts);
+            } else {
+                // 本番環境：空配列を設定し、エラーはユーザーに表示される
+                setPosts([]);
+            }
         }
     };
 
@@ -49,9 +55,15 @@ export const PostProvider = ({ children }) => {
             setItems(res.data);
         } catch (error) {
             console.error("Failed to fetch items", error);
-            // 如果 API 失败，使用模拟数据（用于演示）
-            console.log("Using mock items for demonstration");
-            setItems(mockItems);
+            // 開発環境のみ：API 失敗時にモックデータを使用（デモ用）
+            // 本番環境では空配列を返す（エラーはそのまま表示）
+            if (import.meta.env.DEV) {
+                console.log("Using mock items for demonstration");
+                setItems(mockItems);
+            } else {
+                // 本番環境：空配列を設定
+                setItems([]);
+            }
         }
     };
 

@@ -29,6 +29,18 @@ def add_favorite(
     db.add(favorite)
     db.commit()
     
+    # Create notification for post author
+    if post.author_id != current_user.id:
+        notification = models.Notification(
+            user_id=post.author_id,
+            type="favorite",
+            actor_id=current_user.id,
+            target_type="post",
+            target_id=post_id,
+        )
+        db.add(notification)
+        db.commit()
+    
     return {"status": "favorited", "message": "Post favorited successfully"}
 
 @router.delete("/posts/{post_id}")

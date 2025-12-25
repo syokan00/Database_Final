@@ -8,13 +8,30 @@ import ImageLightbox from './ImageLightbox';
 import client from '../api/client';
 import './PostCard.css';
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, highlight = false }) => {
     const { toggleLike, deletePost, toggleFavorite, likedPostIds, favoritedPostIds, followingUserIds, toggleFollowUser, refreshPosts } = usePosts();
     const { user } = useAuth();
     const { t } = useLanguage();
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [lightboxImage, setLightboxImage] = useState(null);
+    const postRef = React.useRef(null);
+
+    // 如果被高亮，滚动到该帖子
+    React.useEffect(() => {
+        if (highlight && postRef.current) {
+            setTimeout(() => {
+                postRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // 添加高亮效果
+                postRef.current.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                setTimeout(() => {
+                    if (postRef.current) {
+                        postRef.current.style.boxShadow = '';
+                    }
+                }, 2000);
+            }, 100);
+        }
+    }, [highlight]);
 
     // Check if liked by current user
     const isLiked = post.liked_by_me || likedPostIds.includes(post.id);
@@ -87,7 +104,7 @@ const PostCard = ({ post }) => {
     };
 
     return (
-        <div className="post-card">
+        <div className="post-card" ref={postRef} data-post-id={post.id}>
             {/* 1. Category Badge at Top Left */}
             <div className="post-header-top">
                 <span className={`category-badge tag-${post.category}`}>

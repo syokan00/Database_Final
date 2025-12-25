@@ -118,6 +118,7 @@ class ItemBase(BaseModel):
     tags: Optional[List[str]] = []
     image_urls: Optional[str] = None # Comma separated
     contact_method: Optional[str] = None
+    attachments: Optional[List[Dict]] = None  # 支持附件，但Item模型可能没有此字段
 
 class ItemCreate(ItemBase):
     pass
@@ -137,6 +138,19 @@ class ItemOut(ItemBase):
     id: int
     user_id: int
     owner: Optional[UserOut]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Notification Schemas
+class NotificationOut(BaseModel):
+    id: int
+    type: str  # 'like', 'favorite', 'follow', 'comment'
+    actor: Optional[UserOut] = None
+    target_type: Optional[str] = None
+    target_id: Optional[int] = None
+    read: bool
     created_at: datetime
 
     class Config:

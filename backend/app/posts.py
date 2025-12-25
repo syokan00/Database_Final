@@ -132,7 +132,14 @@ def create_post(
     db.commit()
     db.refresh(new_post)
     
-    # NOTE: 已取消“翻译到当前语言”功能，暂不自动触发翻译任务
+    try:
+        # Check badges after creating post (first_post badge, night_owl, streak_poster, etc.)
+        check_badges_for_user(current_user.id, db)
+    except Exception as e:
+        # Don't fail post creation if badge check fails
+        print(f"Badge check failed after post creation: {e}")
+    
+    # NOTE: 已取消"翻译到当前语言"功能，暂不自动触发翻译任务
     
     # Set rate limit
     r.setex(key, 30, "1")
@@ -223,6 +230,18 @@ def like_post(
     new_like = models.Like(post_id=id, user_id=current_user.id)
     db.add(new_like)
     db.commit()
+    
+    # Create notification for post author
+    if post.author_id != current_user.id:
+        notification = models.Notification(
+            user_id=post.author_id,
+            type="like",
+            actor_id=current_user.id,
+            target_type="post",
+            target_id=id,
+        )
+        db.add(notification)
+        db.commit()
     
     # Check badges (Popularity) - usually done async or in badge service
     # For simplicity, we can trigger a check here or rely on the async task

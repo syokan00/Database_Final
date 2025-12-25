@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ChatPage from './pages/ChatPage';
+import FollowListPage from './pages/FollowListPage';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -60,6 +61,7 @@ function App() {
                   <Route path="/chat/:id" element={<ChatPage />} />
                   <Route path="/badges" element={<BadgePage />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/users/:userId/follow" element={<FollowListPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                 </Routes>

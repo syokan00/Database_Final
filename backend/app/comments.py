@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from . import schemas, models, database, auth
+from .services.badge_service import check_badges_for_user
 import redis
 import os
 
@@ -35,6 +36,24 @@ def create_comment(
     db.add(new_comment)
     db.commit()
     db.refresh(new_comment)
+    
+    # Create notification for post author (don't notify if commenting on own post)
+    if post.author_id != current_user.id:
+        notification = models.Notification(
+            user_id=post.author_id,
+            type="comment",
+            actor_id=current_user.id,
+            target_type="post",
+            target_id=comment.post_id,
+        )
+        db.add(notification)
+        db.commit()
+    
+    try:
+        # Check badges after creating comment (comment_king, etc.)
+        check_badges_for_user(current_user.id, db)
+    except Exception as e:
+        print(f"Badge check failed after comment creation: {e}")
     
     # Set rate limit
     r.setex(key, 10, "1")

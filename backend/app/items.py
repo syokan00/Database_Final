@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from . import schemas, models, database, auth
+from .services.badge_service import check_badges_for_user
 
 router = APIRouter(prefix="/api/items", tags=["items"])
 
@@ -44,23 +45,40 @@ def create_item(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
+    # 验证必需字段
+    if not item.title or not item.title.strip():
+        raise HTTPException(status_code=400, detail="Title is required")
+    
+    # 验证价格
+    if item.price is None or item.price < 0:
+        raise HTTPException(status_code=400, detail="Price must be a non-negative number")
+    
     new_item = models.Item(
-        title=item.title,
-        description=item.description,
+        title=item.title.strip(),
+        description=item.description.strip() if item.description else None,
         price=item.price,
-        status=item.status,
-        category=item.category,
+        status=item.status or "selling",
+        category=item.category or "other",
         tags=",".join(item.tags) if item.tags else "",
         image_urls=item.image_urls,
         contact_method=item.contact_method,
         user_id=current_user.id
     )
-    # Handle attachments if they exist in the schema
-    if hasattr(item, 'attachments') and item.attachments:
-        new_item.attachments = item.attachments
+    
+    # Item模型没有attachments字段，忽略它（如果前端发送了）
+    # attachments字段只在Post模型中存在
+    
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
+    
+    try:
+        # Check badges after creating item (top_seller, etc.)
+        check_badges_for_user(current_user.id, db)
+    except Exception as e:
+        # Don't fail item creation if badge check fails
+        print(f"Badge check failed after item creation: {e}")
+    
     return _item_to_out(new_item)
 
 @router.get("/{id}", response_model=schemas.ItemOut)

@@ -3,15 +3,17 @@ import { Search, Filter, BookOpen } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePosts } from '../contexts/PostContext';
 import PostCard from '../components/PostCard';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import './NotesPage.css';
 
 const NotesPage = () => {
     const { t } = useLanguage();
     const { posts } = usePosts();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
     const [filter, setFilter] = useState('all');
     const [displayPosts, setDisplayPosts] = useState([]);
+    const highlightPostId = searchParams.get('highlight') ? parseInt(searchParams.get('highlight')) : null;
 
     // 允许从 /labs /jobs 等入口带过滤条件跳转过来
     useEffect(() => {
@@ -55,7 +57,11 @@ const NotesPage = () => {
 
                 <div className="posts-list">
                     {displayPosts.map(post => (
-                        <PostCard key={post.id} post={post} />
+                        <PostCard 
+                            key={post.id} 
+                            post={post} 
+                            highlight={highlightPostId === post.id}
+                        />
                     ))}
                 </div>
             </div>

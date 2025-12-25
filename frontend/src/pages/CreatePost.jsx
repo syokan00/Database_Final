@@ -170,23 +170,40 @@ const CreatePost = () => {
         }
 
         if (isItemMode) {
+            // 商品发布的额外验证
+            if (!title.trim()) {
+                alert('商品名を入力してください');
+                return;
+            }
+            
+            const priceValue = parseFloat(price);
+            if (isNaN(priceValue) || priceValue < 0) {
+                alert('有効な価格を入力してください（0円以上）');
+                return;
+            }
+            
             try {
-                await addItem({
-                    title,
-                    description: content,
-                    price: parseFloat(price) || 0,
+                const itemData = {
+                    title: title.trim(),
+                    description: content.trim() || null,
+                    price: priceValue,
                     status: 'selling',
-                    category: itemCategory,
-                    tags: [itemCategory, 'item'],
+                    category: itemCategory || 'other',
+                    tags: itemCategory ? [itemCategory] : [],
                     image_urls: images.length > 0 ? images.join(',') : null,
-                    attachments: attachments.length > 0 ? attachments : null,
                     contact_method: 'message'
-                });
-                alert(t.items?.sellSuccess || 'Item listed');
+                };
+                
+                // 不发送attachments，因为Item模型不支持
+                // attachments字段只在Post中使用
+                
+                await addItem(itemData);
+                alert(t.items?.sellSuccess || '出品しました！');
                 navigate('/items');
             } catch (error) {
                 console.error('Item creation failed:', error);
-                alert((t.items?.sellFailed || 'Failed to list item') + ': ' + (error.response?.data?.detail || error.message));
+                const errorMsg = error.response?.data?.detail || error.message || '不明なエラー';
+                alert((t.items?.sellFailed || '出品に失敗しました') + ': ' + errorMsg);
             }
         } else {
             try {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { User, Settings, LogOut, Award, FileText, Heart, MapPin, Calendar, ShoppingBag, Trash2, Camera } from 'lucide-react';
+import { User, Settings, LogOut, Award, FileText, Heart, MapPin, Calendar, ShoppingBag, Trash2, Camera, UserPlus, UserCheck } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { usePosts } from '../contexts/PostContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import ItemCard from '../components/ItemCard';
 import client from '../api/client';
@@ -12,8 +12,11 @@ import './ProfilePage.css';
 const ProfilePage = () => {
     const { t } = useLanguage();
     const { user: authUser, logout, isAuthenticated, setUser: setAuthUser } = useAuth();
-    const { posts, items, likedPostIds, deletePost, deleteItem } = usePosts();
+    const { posts, items, likedPostIds, deletePost, deleteItem, followingUserIds, toggleFollowUser } = usePosts();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const userIdParam = searchParams.get('userId');
+    const targetUserId = userIdParam && !isNaN(userIdParam) ? parseInt(userIdParam, 10) : null;
 
     const [activeTab, setActiveTab] = useState('posts');
     const [ownedBadges, setOwnedBadges] = useState([]);
@@ -26,11 +29,94 @@ const ProfilePage = () => {
     const [profileYear, setProfileYear] = useState('');
     const [profileGrade, setProfileGrade] = useState('');
     const [profileBio, setProfileBio] = useState('');
+    const [userStats, setUserStats] = useState({ follower_count: 0, following_count: 0, followed_by_me: false });
+    const [isOwnProfile, setIsOwnProfile] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // 同步authUser到localUser
+    // 如果指定了userId，获取该用户的信息
     useEffect(() => {
-        setLocalUser(authUser);
-    }, [authUser]);
+        const loadUser = async () => {
+            // 检查 targetUserId 是否有效
+            if (targetUserId && !isNaN(targetUserId) && targetUserId > 0) {
+                setLoading(true);
+                setError(null);
+                try {
+                    console.log('Loading user profile for userId:', targetUserId);
+                    const response = await client.get(`/users/${targetUserId}/stats`);
+                    console.log('User stats response:', response.data);
+                    
+                    if (!response.data || !response.data.user) {
+                        throw new Error('User not found in response');
+                    }
+                    
+                    const targetUser = response.data.user;
+                    setLocalUser(targetUser);
+                    setIsOwnProfile(authUser && targetUser.id === authUser.id);
+                    
+                    // 获取该用户的徽章
+                    try {
+                        const badgesResponse = await client.get(`/badges/users/${targetUserId}`);
+                        setOwnedBadges(badgesResponse.data || []);
+                    } catch (badgeError) {
+                        console.error('Failed to fetch badges:', badgeError);
+                        setOwnedBadges([]);
+                    }
+                    
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Failed to fetch user profile:', error);
+                    setError(error.message || 'ユーザー情報の取得に失敗しました');
+                    setLoading(false);
+                    
+                    // 如果用户不存在或未登录，导航到自己的主页或登录页
+                    if (!authUser) {
+                        navigate('/login');
+                    } else {
+                        setLocalUser(authUser);
+                        setIsOwnProfile(true);
+                    }
+                }
+            }
+            // 注意：没有指定userId的情况在另一个useEffect中处理
+        };
+        // 只有在有targetUserId时才执行
+        if (targetUserId && !isNaN(targetUserId) && targetUserId > 0) {
+            loadUser();
+        }
+    }, [targetUserId, authUser, navigate]);
+    
+    // 当targetUserId变化时，重置状态
+    useEffect(() => {
+        if (targetUserId && !isNaN(targetUserId) && targetUserId > 0) {
+            // 重置状态，准备加载新用户
+            setLocalUser(null);
+            setLoading(true);
+            setError(null);
+        }
+    }, [targetUserId]);
+
+    // 同步authUser到localUser（如果查看自己的资料）
+    useEffect(() => {
+        if (!targetUserId) {
+            // 没有指定userId，显示当前用户
+            if (authUser) {
+                console.log('Setting localUser to authUser (own profile):', authUser);
+                setLocalUser(authUser);
+                setIsOwnProfile(true);
+                setLoading(false);
+                setError(null);
+            } else {
+                // 如果没有登录，保持localUser为null
+                console.log('No authUser, setting localUser to null');
+                setLocalUser(null);
+                setLoading(false);
+            }
+        } else {
+            // 有targetUserId时，确保loading状态正确
+            console.log('targetUserId exists, waiting for user data to load');
+        }
+    }, [authUser, targetUserId]);
 
     const user = localUser || authUser;
 
@@ -46,18 +132,43 @@ const ProfilePage = () => {
     }, [showSettings, user]);
 
     useEffect(() => {
+        const fetchUserStats = async () => {
+            if (user) {
+                try {
+                    const userId = targetUserId || user.id;
+                    const response = await client.get(`/users/${userId}/stats`);
+                    setUserStats({
+                        follower_count: response.data.follower_count || 0,
+                        following_count: response.data.following_count || 0,
+                        followed_by_me: response.data.followed_by_me || false,
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch user stats:', error);
+                }
+            }
+        };
+        fetchUserStats();
+    }, [user, targetUserId]);
+
+    useEffect(() => {
         const fetchBadges = async () => {
             if (user) {
                 try {
-                    const response = await client.get('/badges/me');
-                    setOwnedBadges(response.data);
+                    if (isOwnProfile) {
+                        // 自己的徽章
+                        const response = await client.get('/badges/me');
+                        setOwnedBadges(response.data || []);
+                    } else {
+                        // 其他用户的徽章（已在loadUser中获取）
+                        // 这里不需要重复获取
+                    }
                 } catch (error) {
                     console.error("Failed to fetch badges", error);
                 }
             }
         };
         fetchBadges();
-    }, [user]);
+    }, [user, isOwnProfile]);
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
@@ -169,26 +280,60 @@ const ProfilePage = () => {
         }
     };
 
-    if (!user) {
+    // 显示加载状态
+    if (loading) {
         return (
             <div className="profile-page">
                 <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
-                    <h2>{t.profile?.pleaseLoginTitle || t.common?.loginRequired || 'ログインしてください'}</h2>
-                    <button className="btn btn-primary" onClick={() => navigate('/login')}>{t.common?.login || 'ログイン'}</button>
+                    <h2>{t.profile?.loadingProfile || 'ユーザー情報を読み込み中...'}</h2>
+                    <p>ユーザーID: {targetUserId}</p>
                 </div>
             </div>
         );
     }
 
-    // Filter data for current user
-    const myPosts = posts.filter(p => {
+    // 显示错误状态
+    if (error && targetUserId) {
+        return (
+            <div className="profile-page">
+                <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                    <h2>エラー</h2>
+                    <p>{error}</p>
+                    <button className="btn btn-primary" onClick={() => navigate('/profile')}>
+                        {t.profile?.backToMyProfile || '自分のプロフィールに戻る'}
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!user && !loading) {
+        // 只有在不是加载状态且没有用户时才显示登录提示
+        // 如果正在加载其他用户的资料，不应该显示这个
+        if (!targetUserId) {
+            return (
+                <div className="profile-page">
+                    <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                        <h2>{t.profile?.pleaseLoginTitle || t.common?.loginRequired || 'ログインしてください'}</h2>
+                        <button className="btn btn-primary" onClick={() => navigate('/login')}>{t.common?.login || 'ログイン'}</button>
+                    </div>
+                </div>
+            );
+        }
+        // 如果指定了userId但加载失败，显示错误（已在上面处理）
+        return null;
+    }
+
+    // Filter data for current user or target user
+    const displayPosts = posts.filter(p => {
         if (!p.author && !p.author_id) return false;
         return (p.author?.id === user.id) || (p.author_id === user.id);
     });
-    const myItems = items.filter(i => (i.user_id === user.id) || (i.owner?.id === user.id));
-    const likedPosts = posts.filter(p => likedPostIds.includes(p.id));
+    const displayItems = items.filter(i => (i.user_id === user.id) || (i.owner?.id === user.id));
+    // 只在自己查看自己的资料时显示喜欢的帖子
+    const likedPosts = isOwnProfile ? posts.filter(p => likedPostIds.includes(p.id)) : [];
 
-    console.log('ProfilePage - posts:', posts.length, 'myPosts:', myPosts.length, 'items:', items.length, 'myItems:', myItems.length);
+    console.log('ProfilePage - posts:', posts.length, 'displayPosts:', displayPosts.length, 'items:', items.length, 'displayItems:', displayItems.length);
 
     return (
         <div className="profile-page" style={{ minHeight: 'calc(100vh - 64px)', background: 'var(--bg-body)', padding: '2rem 0' }}>
@@ -201,11 +346,13 @@ const ProfilePage = () => {
                         backgroundPosition: 'center',
                         position: 'relative'
                     }}>
-                        <label className="cover-upload-btn">
-                            <input type="file" accept="image/*" onChange={handleCoverUpload} style={{ display: 'none' }} />
-                            <Camera size={18} color="white" />
-                            <span style={{ color: 'white', fontSize: '0.875rem', marginLeft: '4px' }}>{t.profile?.changeCover || 'Change cover'}</span>
-                        </label>
+                        {isOwnProfile && (
+                            <label className="cover-upload-btn">
+                                <input type="file" accept="image/*" onChange={handleCoverUpload} style={{ display: 'none' }} />
+                                <Camera size={18} color="white" />
+                                <span style={{ color: 'white', fontSize: '0.875rem', marginLeft: '4px' }}>{t.profile?.changeCover || 'Change cover'}</span>
+                            </label>
+                        )}
                     </div>
                     <div className="profile-info-wrapper">
                         <div className="profile-avatar-large">
@@ -213,11 +360,13 @@ const ProfilePage = () => {
                                 src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${user.nickname || 'User'}`}
                                 alt="Profile"
                             />
-                            {/* Upload Overlay */}
-                            <label className="avatar-upload-overlay">
-                                <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: 'none' }} />
-                                <Camera size={20} color="white" />
-                            </label>
+                            {/* Upload Overlay - 只有自己的资料才显示 */}
+                            {isOwnProfile && (
+                                <label className="avatar-upload-overlay">
+                                    <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: 'none' }} />
+                                    <Camera size={20} color="white" />
+                                </label>
+                            )}
                         </div>
                         <div className="profile-details">
                             <h1 className="profile-name">{user.nickname || user.email}</h1>
@@ -233,27 +382,71 @@ const ProfilePage = () => {
                             </div>
                         </div>
                         <div className="profile-actions">
-                            <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(true)}>
-                                <Settings size={18} />
-                            </button>
-                            <button className="btn btn-danger btn-sm" onClick={handleLogout}>
-                                <LogOut size={18} />
-                                <span>{t.common.logout}</span>
-                            </button>
+                            {isOwnProfile ? (
+                                <>
+                                    <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(true)}>
+                                        <Settings size={18} />
+                                    </button>
+                                    <button className="btn btn-danger btn-sm" onClick={handleLogout}>
+                                        <LogOut size={18} />
+                                        <span>{t.common.logout}</span>
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    {isAuthenticated && (
+                                        <button 
+                                            className={`btn ${userStats.followed_by_me ? 'btn-ghost' : 'btn-primary'} btn-sm`}
+                                            onClick={async () => {
+                                                if (user) {
+                                                    await toggleFollowUser(user.id);
+                                                    // 更新本地状态
+                                                    setUserStats(prev => ({
+                                                        ...prev,
+                                                        followed_by_me: !prev.followed_by_me
+                                                    }));
+                                                }
+                                            }}
+                                        >
+                                            {userStats.followed_by_me ? (
+                                                <>
+                                                    <UserCheck size={18} />
+                                                    <span>{t.profile?.following || 'フォロー中'}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UserPlus size={18} />
+                                                    <span>{t.profile?.followUser || 'フォロー'}</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
                     </div>
 
                     {/* Stats */}
                     <div className="profile-stats">
+                        <div className="stat-item" onClick={() => navigate(`/users/${user.id}/follow?type=following`)} style={{ cursor: 'pointer' }}>
+                            <span className="stat-value">{userStats.following_count}</span>
+                            <span className="stat-label">{t.profile?.following || 'フォロー中'}</span>
+                        </div>
+                        <div className="stat-item" onClick={() => navigate(`/users/${user.id}/follow?type=followers`)} style={{ cursor: 'pointer' }}>
+                            <span className="stat-value">{userStats.follower_count}</span>
+                            <span className="stat-label">{t.profile?.followers || 'フォロワー'}</span>
+                        </div>
                         <div className="stat-item">
-                            <span className="stat-value">{myPosts.length}</span>
+                            <span className="stat-value">{displayPosts.length}</span>
                             <span className="stat-label">{t.profile?.posts || 'Posts'}</span>
                         </div>
-                        <div className="stat-item">
-                            <span className="stat-value">{likedPosts.length}</span>
-                            <span className="stat-label">{t.profile?.likes || 'Likes'}</span>
-                        </div>
-                        <div className="stat-item" onClick={() => navigate('/badges')}>
+                        {isOwnProfile && (
+                            <div className="stat-item">
+                                <span className="stat-value">{likedPosts.length}</span>
+                                <span className="stat-label">{t.profile?.likes || 'Likes'}</span>
+                            </div>
+                        )}
+                        <div className="stat-item" onClick={() => navigate('/badges')} style={{ cursor: 'pointer' }}>
                             <span className="stat-value">{ownedBadges.length}</span>
                             <span className="stat-label">{t.profile?.badgesLabel || 'Badges'}</span>
                         </div>
@@ -269,24 +462,24 @@ const ProfilePage = () => {
                             <form onSubmit={handleSaveProfile}>
                                 <h4 style={{ margin: '0.5rem 0' }}>{t.profile?.profileSectionTitle || 'Profile'}</h4>
                                 <div className="form-group">
-                                    <label>{t.profile?.nicknameLabel || 'Nickname'}</label>
-                                    <input value={profileNickname} onChange={e => setProfileNickname(e.target.value)} />
+                                    <label htmlFor="profile-nickname">{t.profile?.nicknameLabel || 'Nickname'}</label>
+                                    <input id="profile-nickname" name="nickname" value={profileNickname} onChange={e => setProfileNickname(e.target.value)} />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t.profile?.majorLabel || 'Major'}</label>
-                                    <input value={profileMajor} onChange={e => setProfileMajor(e.target.value)} />
+                                    <label htmlFor="profile-major">{t.profile?.majorLabel || 'Major'}</label>
+                                    <input id="profile-major" name="major" value={profileMajor} onChange={e => setProfileMajor(e.target.value)} />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t.profile?.yearLabel || 'Year'}</label>
-                                    <input type="number" value={profileYear} onChange={e => setProfileYear(e.target.value)} placeholder="2025" />
+                                    <label htmlFor="profile-year">{t.profile?.yearLabel || 'Year'}</label>
+                                    <input id="profile-year" name="year" type="number" value={profileYear} onChange={e => setProfileYear(e.target.value)} placeholder="2025" />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t.profile?.gradeLabel || 'Grade'}</label>
-                                    <input value={profileGrade} onChange={e => setProfileGrade(e.target.value)} />
+                                    <label htmlFor="profile-grade">{t.profile?.gradeLabel || 'Grade'}</label>
+                                    <input id="profile-grade" name="grade" value={profileGrade} onChange={e => setProfileGrade(e.target.value)} />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t.profile?.bioLabel || 'Bio'}</label>
-                                    <textarea value={profileBio} onChange={e => setProfileBio(e.target.value)} rows={3} />
+                                    <label htmlFor="profile-bio">{t.profile?.bioLabel || 'Bio'}</label>
+                                    <textarea id="profile-bio" name="bio" value={profileBio} onChange={e => setProfileBio(e.target.value)} rows={3} />
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                                     <button type="submit" className="btn btn-primary">{t.profile?.saveProfile || t.common?.save || 'Save'}</button>
@@ -298,12 +491,12 @@ const ProfilePage = () => {
                             <form onSubmit={handleChangePassword}>
                                 <h4 style={{ margin: '0.5rem 0' }}>{t.profile?.passwordSectionTitle || 'Change password'}</h4>
                                 <div className="form-group">
-                                    <label>{t.profile?.oldPasswordLabel || 'Old password'}</label>
-                                    <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} required />
+                                    <label htmlFor="old-password">{t.profile?.oldPasswordLabel || 'Old password'}</label>
+                                    <input id="old-password" name="oldPassword" type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} required />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t.profile?.newPasswordLabel || 'New password'}</label>
-                                    <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required />
+                                    <label htmlFor="new-password">{t.profile?.newPasswordLabel || 'New password'}</label>
+                                    <input id="new-password" name="newPassword" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required />
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                                     <button type="submit" className="btn btn-primary">{t.profile?.updatePassword || 'Update'}</button>
@@ -350,20 +543,24 @@ const ProfilePage = () => {
                     <div className="tab-content">
                         {activeTab === 'posts' && (
                             <div className="profile-list">
-                                {myPosts.length > 0 ? (
-                                    myPosts.map(post => (
+                                {displayPosts.length > 0 ? (
+                                    displayPosts.map(post => (
                                         <div key={post.id} className="profile-post-wrapper">
                                             <PostCard post={post} />
-                                            <button className="delete-btn" onClick={() => deletePost(post.id)}>
-                                                <Trash2 size={16} /> {t.common?.delete || 'Delete'}
-                                            </button>
+                                            {isOwnProfile && (
+                                                <button className="delete-btn" onClick={() => deletePost(post.id)}>
+                                                    <Trash2 size={16} /> {t.common?.delete || 'Delete'}
+                                                </button>
+                                            )}
                                         </div>
                                     ))
                                 ) : (
                                     <div className="empty-state">
                                         <FileText size={48} color="var(--border-light)" />
                                         <p>{t.profile?.noPostsYet || 'No posts yet'}</p>
-                                        <button className="btn btn-primary" onClick={() => navigate('/create')}>{t.profile?.createPost || 'Create Post'}</button>
+                                        {isOwnProfile && (
+                                            <button className="btn btn-primary" onClick={() => navigate('/create')}>{t.profile?.createPost || 'Create Post'}</button>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -371,12 +568,19 @@ const ProfilePage = () => {
 
                         {activeTab === 'likes' && (
                             <div className="profile-list">
-                                {likedPosts.length > 0 ? (
-                                    likedPosts.map(post => <PostCard key={post.id} post={post} />)
+                                {isOwnProfile ? (
+                                    likedPosts.length > 0 ? (
+                                        likedPosts.map(post => <PostCard key={post.id} post={post} />)
+                                    ) : (
+                                        <div className="empty-state">
+                                            <Heart size={48} color="var(--border-light)" />
+                                            <p>{t.profile?.noLikedPostsYet || 'No liked posts yet'}</p>
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="empty-state">
                                         <Heart size={48} color="var(--border-light)" />
-                                        <p>{t.profile?.noLikedPostsYet || 'No liked posts yet'}</p>
+                                        <p>{t.profile?.thisTabOnlyForMe || 'このタブは自分のプロフィールでのみ表示されます'}</p>
                                     </div>
                                 )}
                             </div>
@@ -384,20 +588,24 @@ const ProfilePage = () => {
 
                         {activeTab === 'items' && (
                             <div className="items-grid">
-                                {myItems.length > 0 ? (
-                                    myItems.map(item => (
+                                {displayItems.length > 0 ? (
+                                    displayItems.map(item => (
                                         <div key={item.id} className="profile-item-wrapper">
-                                            <ItemCard item={item} isOwner={true} />
-                                            <button className="delete-btn-item" onClick={() => deleteItem(item.id)}>
-                                                <Trash2 size={16} /> {t.common?.delete || 'Delete'}
-                                            </button>
+                                            <ItemCard item={item} isOwner={isOwnProfile} />
+                                            {isOwnProfile && (
+                                                <button className="delete-btn-item" onClick={() => deleteItem(item.id)}>
+                                                    <Trash2 size={16} /> {t.common?.delete || 'Delete'}
+                                                </button>
+                                            )}
                                         </div>
                                     ))
                                 ) : (
                                     <div className="empty-state">
                                         <ShoppingBag size={48} color="var(--border-light)" />
                                         <p>{t.profile?.noItemsYet || 'No items yet'}</p>
-                                        <button className="btn btn-primary" onClick={() => navigate('/items')}>{t.nav.items || 'Go to Market'}</button>
+                                        {isOwnProfile && (
+                                            <button className="btn btn-primary" onClick={() => navigate('/items')}>{t.nav.items || 'Go to Market'}</button>
+                                        )}
                                     </div>
                                 )}
                             </div>

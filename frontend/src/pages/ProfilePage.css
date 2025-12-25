@@ -112,6 +112,8 @@
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-light);
     min-height: 400px;
+    position: relative;
+    overflow: visible;
 }
 
 .profile-tabs {
@@ -146,6 +148,8 @@
 
 .tab-content {
     padding: 2rem;
+    position: relative;
+    overflow: visible;
 }
 
 .profile-list {

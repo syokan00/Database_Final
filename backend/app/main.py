@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from . import models, database, auth, posts, badges, comments, items, uploads, favorites, users
+from . import models, database, auth, posts, badges, comments, items, uploads, favorites, users, notifications, messages
 
 # Create tables (for dev simplicity, in prod use Alembic)
 models.Base.metadata.create_all(bind=database.engine)
@@ -32,6 +32,8 @@ app.include_router(items.router)
 app.include_router(uploads.router)
 app.include_router(favorites.router)
 app.include_router(users.router)
+app.include_router(notifications.router)
+app.include_router(messages.router)
 
 @app.get("/")
 def read_root():
