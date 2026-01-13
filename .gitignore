@@ -46,4 +46,15 @@ docker-data/
 *.pfx
 *.jks
 id_rsa
-id
+id_rsa.pub
+
+# 前端构建产物
+frontend/.vite/
+frontend/dist/
+frontend/build/
+
+# 后端
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/.venv/
