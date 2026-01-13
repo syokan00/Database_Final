@@ -286,5 +286,4 @@ CREATE INDEX idx_likes_item_id ON likes(item_id);
 - **tags テーブル**: タグを別テーブルに分離し、多対多の関係を実現
 
 
-<img width="1717" height="884" alt="image" src="https://github.com/user-attachments/assets/c39f6ceb-b39f-4510-8089-95b0323c04e6" />
 
