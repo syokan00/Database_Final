@@ -87,12 +87,12 @@ const ItemCard = ({ item, isOwner = false }) => {
 
                 <div className="item-footer">
                     <div className="seller-info">
-                        {item.owner?.avatar_url ? (
+                        {!item.is_anonymous && item.owner?.avatar_url ? (
                             <img src={item.owner.avatar_url} alt={item.owner.nickname} className="seller-avatar" />
                         ) : (
                             <div className="seller-avatar"></div>
                         )}
-                        <span>{item.owner?.nickname || 'Anonymous'}</span>
+                        <span>{item.is_anonymous ? '匿名ユーザー' : (item.owner?.nickname || 'Anonymous')}</span>
                     </div>
 
                     <div className="item-actions">

@@ -60,6 +60,7 @@ class Post(Base):
     attachments = Column(JSON)  # JSON array of file attachments [{url, filename, size, type, category}]
     translated_cache = Column(JSON)
     is_translated = Column(Boolean, default=False)
+    is_anonymous = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     author = relationship("User", back_populates="posts")
@@ -116,6 +117,7 @@ class Item(Base):
     tags = Column(Text) # Comma separated
     image_urls = Column(Text)
     contact_method = Column(Text)
+    is_anonymous = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     owner = relationship("User", back_populates="items")

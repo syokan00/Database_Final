@@ -12,6 +12,7 @@ const NotesPage = () => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const [filter, setFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     const [displayPosts, setDisplayPosts] = useState([]);
     const highlightPostId = searchParams.get('highlight') ? parseInt(searchParams.get('highlight')) : null;
 
@@ -26,11 +27,23 @@ const NotesPage = () => {
     useEffect(() => {
         // Filter posts from API
         const filtered = posts.filter(p => {
-            if (filter === 'all') return p.category !== 'items';
-            return p.category === filter;
+            // Category filter
+            const matchesCategory = filter === 'all' ? p.category !== 'items' : p.category === filter;
+            
+            // Search filter
+            if (searchQuery.trim()) {
+                const query = searchQuery.toLowerCase();
+                const matchesSearch = 
+                    p.title?.toLowerCase().includes(query) ||
+                    p.content?.toLowerCase().includes(query) ||
+                    p.tags?.some(tag => tag.toLowerCase().includes(query));
+                return matchesCategory && matchesSearch;
+            }
+            
+            return matchesCategory;
         });
         setDisplayPosts(filtered);
-    }, [posts, filter]);
+    }, [posts, filter, searchQuery]);
 
     return (
         <div className="notes-page">
@@ -44,7 +57,13 @@ const NotesPage = () => {
                 <div className="notes-controls">
                     <div className="search-wrapper">
                         <Search size={18} className="search-icon" />
-                        <input type="text" placeholder="キーワードで検索..." className="notes-search-input" />
+                        <input 
+                            type="text" 
+                            placeholder="キーワードで検索..." 
+                            className="notes-search-input"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
                     <div className="filter-tags">
                         <button className={`filter-tag ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>すべて</button>

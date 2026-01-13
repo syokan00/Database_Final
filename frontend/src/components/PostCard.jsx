@@ -121,9 +121,9 @@ const PostCard = ({ post, highlight = false }) => {
             <div className="post-meta-simple">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
                     <span className="author-name" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {post.author?.nickname || post.author?.email || 'Anonymous'}
+                        {post.is_anonymous ? '匿名ユーザー' : (post.author?.nickname || post.author?.email || 'Anonymous')}
                     </span>
-                    {!!user && !!authorId && !isOwner && (
+                    {!post.is_anonymous && !!user && !!authorId && !isOwner && (
                         <button
                             className="btn btn-ghost btn-sm"
                             style={{ padding: '0.25rem 0.6rem', borderRadius: '9999px' }}

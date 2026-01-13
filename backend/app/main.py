@@ -7,17 +7,11 @@ models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="Memolucky API")
 
-# CORS
-origins = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
-
+# CORS - Allow all origins in development
+# In production, you should restrict this to specific domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

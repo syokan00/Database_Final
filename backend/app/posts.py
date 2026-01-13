@@ -73,6 +73,9 @@ def get_posts(
                 models.Favorite.user_id == user_id
             ).first() is not None
         
+        # Hide author information if post is anonymous
+        author_info = None if p.is_anonymous else p.author
+        
         results.append({
             "id": p.id,
             "title": p.title,
@@ -83,9 +86,10 @@ def get_posts(
             "restriction_type": p.restriction_type,
             "image_urls": p.image_urls,  # Add image_urls
             "attachments": p.attachments,  # Add file attachments
-            "author": p.author,
+            "author": author_info,
             "translated_cache": p.translated_cache,
             "is_translated": p.is_translated,
+            "is_anonymous": p.is_anonymous,
             "likes": len(p.likes),
             "liked_by_me": liked,
             "favorited_by_me": favorited,
@@ -126,6 +130,7 @@ def create_post(
         restriction_type=post.restriction_type,
         image_urls=post.image_urls,
         attachments=post.attachments,
+        is_anonymous=post.is_anonymous if post.is_anonymous is not None else False,
         author_id=current_user.id
     )
     db.add(new_post)
@@ -144,6 +149,9 @@ def create_post(
     # Set rate limit
     r.setex(key, 30, "1")
     
+    # Hide author information if post is anonymous
+    author_info = None if new_post.is_anonymous else current_user
+    
     return {
         "id": new_post.id,
         "title": new_post.title,
@@ -154,9 +162,10 @@ def create_post(
         "restriction_type": new_post.restriction_type,
         "image_urls": new_post.image_urls,
         "attachments": new_post.attachments,
-        "author": current_user,
+        "author": author_info,
         "translated_cache": None,
         "is_translated": False,
+        "is_anonymous": new_post.is_anonymous,
         "likes": 0,
         "liked_by_me": False,
         "comments": [],
@@ -294,6 +303,8 @@ def update_post(
     post.restriction_type = post_update.restriction_type
     post.image_urls = post_update.image_urls
     post.attachments = post_update.attachments
+    if post_update.is_anonymous is not None:
+        post.is_anonymous = post_update.is_anonymous
     
     # If content changed, clear translation cache (translation feature disabled)
     if post.content != post_update.content:
@@ -314,6 +325,9 @@ def update_post(
         models.Favorite.user_id == current_user.id
     ).first() is not None
     
+    # Hide author information if post is anonymous
+    author_info = None if post.is_anonymous else post.author
+    
     return {
         "id": post.id,
         "title": post.title,
@@ -324,9 +338,10 @@ def update_post(
         "restriction_type": post.restriction_type,
         "image_urls": post.image_urls,
         "attachments": post.attachments,
-        "author": post.author,
+        "author": author_info,
         "translated_cache": post.translated_cache,
         "is_translated": post.is_translated,
+        "is_anonymous": post.is_anonymous,
         "likes": len(post.likes),
         "liked_by_me": liked,
         "favorited_by_me": favorited,

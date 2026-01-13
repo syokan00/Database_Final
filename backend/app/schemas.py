@@ -57,6 +57,7 @@ class PostBase(BaseModel):
     restriction_type: Optional[str] = None
     image_urls: Optional[str] = None  # Comma separated URLs
     attachments: Optional[List[Dict]] = None  # List of file attachments
+    is_anonymous: Optional[bool] = False
 
 class PostCreate(PostBase):
     pass
@@ -75,6 +76,7 @@ class PostOut(PostBase):
     author: Optional[UserOut]
     translated_cache: Optional[Dict[str, str]] = None
     is_translated: bool
+    is_anonymous: bool = False
     likes: int
     liked_by_me: bool
     favorited_by_me: bool = False
@@ -119,6 +121,7 @@ class ItemBase(BaseModel):
     image_urls: Optional[str] = None # Comma separated
     contact_method: Optional[str] = None
     attachments: Optional[List[Dict]] = None  # 支持附件，但Item模型可能没有此字段
+    is_anonymous: Optional[bool] = False
 
 class ItemCreate(ItemBase):
     pass
@@ -132,6 +135,7 @@ class ItemUpdate(BaseModel):
     tags: Optional[List[str]] = None
     image_urls: Optional[str] = None
     contact_method: Optional[str] = None
+    is_anonymous: Optional[bool] = None
     attachments: Optional[List[Dict]] = None
 
 class ItemOut(ItemBase):

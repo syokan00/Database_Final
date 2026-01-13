@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dice5, AlertTriangle, ShoppingBag, Image as ImageIcon, X, Upload, Paperclip } from 'lucide-react';
+import { ShoppingBag, Image as ImageIcon, X, Upload, Paperclip } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePosts } from '../contexts/PostContext';
@@ -24,31 +24,6 @@ const CreatePost = () => {
     const [price, setPrice] = useState('');
     const [itemCategory, setItemCategory] = useState('textbook');
     const { user } = useAuth();
-    
-    // Dynamic daily restrictions - changes based on date
-    const getDailyRestrictions = () => {
-        const today = new Date();
-        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-        
-        const charLimits = [50, 120, 200];
-        const forbiddenWords = ['学校', '就活', '研究室', '授業', 'テスト', '試験', 'レポート'];
-        const themes = [
-            '今日は「猫」について触れてください',
-            '今日は「勉強法」について書いてください',
-            '今日は「経験」についてシェアしてください',
-            '今日は「アドバイス」を含めてください',
-            '今日は「失敗談」を書いてください'
-        ];
-        
-        return {
-            charLimit: charLimits[dayOfYear % charLimits.length],
-            forbiddenWord: forbiddenWords[dayOfYear % forbiddenWords.length],
-            randomTheme: themes[dayOfYear % themes.length]
-        };
-    };
-    
-    const [restrictions] = useState(getDailyRestrictions());
-    const { charLimit, forbiddenWord, randomTheme } = restrictions;
 
     const categories = [
         { id: 'lab', label: '研究室' },
@@ -64,6 +39,13 @@ const CreatePost = () => {
             setSelectedCategory(location.state.category);
         }
     }, [location.state]);
+
+    // 当切换到商品模式时，自动取消匿名
+    useEffect(() => {
+        if (isItemMode && isAnonymous) {
+            setIsAnonymous(false);
+        }
+    }, [isItemMode]);
 
     const isItemMode = selectedCategory === 'items';
 
@@ -191,7 +173,8 @@ const CreatePost = () => {
                     category: itemCategory || 'other',
                     tags: itemCategory ? [itemCategory] : [],
                     image_urls: images.length > 0 ? images.join(',') : null,
-                    contact_method: 'message'
+                    contact_method: 'message',
+                    is_anonymous: false  // 商品不支持匿名
                 };
                 
                 // 不发送attachments，因为Item模型不支持
@@ -214,7 +197,8 @@ const CreatePost = () => {
                     tags: [selectedCategory],
                     source_language: 'ja', // Default
                     image_urls: images.length > 0 ? images.join(',') : null,
-                    attachments: attachments.length > 0 ? attachments : null
+                    attachments: attachments.length > 0 ? attachments : null,
+                    is_anonymous: isAnonymous
                 });
                 alert(t.post?.postSuccess || 'Posted');
 
@@ -226,25 +210,9 @@ const CreatePost = () => {
         }
     };
 
-    // 限制验证
-    const validateRestrictions = () => {
-        if (isItemMode) return true;
-        
-        // 字数限制
-        if (content.length > charLimit) return false;
-        
-        // 禁止词检查
-        if (content.includes(forbiddenWord)) return false;
-        
-        // TODO: 可以添加更多限制检查（no-kanji, emoji-only等）
-        
-        return true;
-    };
-
     const isPostDisabled =
         content.length === 0 ||
-        title.length === 0 ||
-        (!isItemMode && !validateRestrictions());
+        title.length === 0;
 
     return (
         <div className="create-post-page">
@@ -254,26 +222,6 @@ const CreatePost = () => {
                         {isItemMode ? (t.items?.sellTitle || 'Sell an item') : t.post.createTitle}
                     </h1>
 
-                    {/* Daily Restrictions / Challenges - Hide for Items */}
-                    {!isItemMode && (
-                        <div className="restrictions-box">
-                            <div className="restriction-header">
-                                <Dice5 size={20} className="spin-icon" />
-                                <h3>{t.post.restrictions}</h3>
-                            </div>
-                            <ul className="restriction-list">
-                                <li className="restriction-item">
-                                    <span className="badge badge-limit">字数制限: {charLimit}文字</span>
-                                </li>
-                                <li className="restriction-item">
-                                    <span className="badge badge-forbidden">禁止ワード: 「{forbiddenWord}」</span>
-                                </li>
-                                <li className="restriction-item">
-                                    <span className="badge badge-theme">テーマ: {randomTheme}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
 
                     <form className="post-form" onSubmit={handlePost}>
                         <div className="form-group">
@@ -344,16 +292,9 @@ const CreatePost = () => {
                         )}
 
                         <div className="form-group">
-                            <div className="label-row">
-                                <label className="form-label">
-                                    {isItemMode ? '商品の説明' : '内容'}
-                                </label>
-                                {!isItemMode && (
-                                    <span className={`char-count ${content.length > charLimit ? 'error' : ''}`}>
-                                        {content.length} / {charLimit}
-                                    </span>
-                                )}
-                            </div>
+                            <label className="form-label">
+                                {isItemMode ? '商品の説明' : '内容'}
+                            </label>
                             <textarea
                                 className="form-textarea"
                                 rows="6"
@@ -361,12 +302,6 @@ const CreatePost = () => {
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                             ></textarea>
-
-                            {!isItemMode && content.includes(forbiddenWord) && (
-                                <div className="error-message">
-                                    <AlertTriangle size={16} /> 禁止ワード「{forbiddenWord}」が含まれています！
-                                </div>
-                            )}
                         </div>
 
                         {/* Image Upload Section */}
@@ -443,14 +378,16 @@ const CreatePost = () => {
                         </div>
 
                         <div className="form-actions">
-                            <label className="checkbox-label">
-                                <input 
-                                    type="checkbox" 
-                                    checked={isAnonymous}
-                                    onChange={(e) => setIsAnonymous(e.target.checked)}
-                                /> 
-                                {t.post.anonymous}
-                            </label>
+                            {!isItemMode && (
+                                <label className="checkbox-label">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isAnonymous}
+                                        onChange={(e) => setIsAnonymous(e.target.checked)}
+                                    /> 
+                                    {t.post.anonymous}
+                                </label>
+                            )}
                             <button type="submit" className="btn btn-primary" disabled={isPostDisabled}>
                                 {isItemMode ? '出品する' : t.common.post}
                             </button>

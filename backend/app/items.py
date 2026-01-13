@@ -9,6 +9,9 @@ router = APIRouter(prefix="/api/items", tags=["items"])
 
 
 def _item_to_out(item: models.Item):
+    # Hide owner information if item is anonymous
+    owner_info = None if item.is_anonymous else item.owner
+    
     return {
         "id": item.id,
         "user_id": item.user_id,
@@ -20,7 +23,8 @@ def _item_to_out(item: models.Item):
         "tags": item.tags.split(",") if item.tags else [],
         "image_urls": item.image_urls,
         "contact_method": item.contact_method,
-        "owner": item.owner,
+        "is_anonymous": item.is_anonymous,
+        "owner": owner_info,
         "created_at": item.created_at,
     }
 
@@ -62,6 +66,7 @@ def create_item(
         tags=",".join(item.tags) if item.tags else "",
         image_urls=item.image_urls,
         contact_method=item.contact_method,
+        is_anonymous=item.is_anonymous if item.is_anonymous is not None else False,
         user_id=current_user.id
     )
     
@@ -136,6 +141,8 @@ def update_item(
         item.image_urls = payload.image_urls
     if payload.contact_method is not None:
         item.contact_method = payload.contact_method
+    if payload.is_anonymous is not None:
+        item.is_anonymous = payload.is_anonymous
     if payload.attachments is not None:
         item.attachments = payload.attachments
 
