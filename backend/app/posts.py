@@ -29,28 +29,29 @@ def get_posts(
     db: Session = Depends(database.get_db),
     current_user: Optional[models.User] = Depends(auth.get_current_user_optional) # Optional auth for viewing
 ):
-    query = db.query(models.Post)
-    
-    if category:
-        query = query.filter(models.Post.category == category)
-    
-    if tag:
-        # Simple string match for now, ideally use Postgres Array or separate table
-        query = query.filter(models.Post.tags.contains(tag))
+    try:
+        query = db.query(models.Post)
         
-    if q:
-        query = query.filter(or_(
-            models.Post.title.contains(q),
-            models.Post.content.contains(q)
-        ))
+        if category:
+            query = query.filter(models.Post.category == category)
         
-    posts = query.order_by(desc(models.Post.created_at)).offset(skip).limit(limit).all()
-    
-    # Process posts for display (translation fallback)
-    results = []
-    user_id = current_user.id if current_user else None
-    
-    for p in posts:
+        if tag:
+            # Simple string match for now, ideally use Postgres Array or separate table
+            query = query.filter(models.Post.tags.contains(tag))
+            
+        if q:
+            query = query.filter(or_(
+                models.Post.title.contains(q),
+                models.Post.content.contains(q)
+            ))
+            
+        posts = query.order_by(desc(models.Post.created_at)).offset(skip).limit(limit).all()
+        
+        # Process posts for display (translation fallback)
+        results = []
+        user_id = current_user.id if current_user else None
+        
+        for p in posts:
         # Check if liked
         liked = False
         if user_id:
@@ -98,7 +99,15 @@ def get_posts(
             "created_at": p.created_at
         })
         
-    return results
+        return results
+    except Exception as e:
+        import logging
+        logger = logging.getLogger("uvicorn")
+        logger.error(f"Failed to fetch posts: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch posts: {str(e)}"
+        )
 
 @router.post("/", response_model=schemas.PostOut, status_code=status.HTTP_201_CREATED)
 def create_post(

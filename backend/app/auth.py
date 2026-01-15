@@ -122,10 +122,15 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     except Exception as e:
         # Rollback transaction on error
         db.rollback()
-        logger.error(f"Registration failed for {user.email}: {str(e)}", exc_info=True)
+        error_msg = str(e)
+        logger.error(f"Registration failed for {user.email}: {error_msg}", exc_info=True)
+        
+        # Return more detailed error message for debugging
+        # In production, you might want to hide some details
+        detail_msg = f"Registration failed: {error_msg}"
         raise HTTPException(
             status_code=500, 
-            detail="Registration failed. Please try again later."
+            detail=detail_msg
         )
 
 @router.post("/login", response_model=schemas.Token)
