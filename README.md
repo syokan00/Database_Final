@@ -109,6 +109,7 @@ cp env.example .env
 
 #### Docker Compose の起動（必須）
 ```bash
+cd ..
 # プロジェクトルートで実行
 docker-compose up -d
 ```
