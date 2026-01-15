@@ -6,8 +6,11 @@ CREATE TABLE IF NOT EXISTS users (
   nickname VARCHAR(64),
   major VARCHAR(128),
   year INT,
+  grade VARCHAR(64),
   language_preference VARCHAR(8) DEFAULT 'ja',
   avatar_url TEXT,
+  cover_image_url TEXT,
+  bio TEXT,
   role VARCHAR(20) DEFAULT 'user',
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -30,8 +33,11 @@ CREATE TABLE IF NOT EXISTS posts (
   category VARCHAR(50) DEFAULT 'other',
   tags TEXT, -- comma separated
   restriction_type VARCHAR(50), -- e.g. 'no-kanji', 'emoji-only'
+  image_urls TEXT, -- comma separated image URLs
+  attachments JSONB, -- JSON array of file attachments [{url, filename, size, type, category}]
   translated_cache JSONB, -- {"ja":"..","zh":"..","en":".."}
   is_translated BOOLEAN DEFAULT FALSE,
+  is_anonymous BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
