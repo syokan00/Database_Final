@@ -74,6 +74,7 @@ class CommentOut(BaseModel):
 class PostOut(PostBase):
     id: int
     author: Optional[UserOut]
+    author_id: Optional[int] = None  # Always include author_id for delete permission check
     translated_cache: Optional[Dict[str, str]] = None
     is_translated: bool
     is_anonymous: bool = False

@@ -87,6 +87,7 @@ def get_posts(
             "image_urls": p.image_urls,  # Add image_urls
             "attachments": p.attachments,  # Add file attachments
             "author": author_info,
+            "author_id": p.author_id,  # Always include author_id for delete permission check
             "translated_cache": p.translated_cache,
             "is_translated": p.is_translated,
             "is_anonymous": p.is_anonymous,
@@ -163,6 +164,7 @@ def create_post(
         "image_urls": new_post.image_urls,
         "attachments": new_post.attachments,
         "author": author_info,
+        "author_id": new_post.author_id,  # Always include author_id for delete permission check
         "translated_cache": None,
         "is_translated": False,
         "is_anonymous": new_post.is_anonymous,
@@ -339,6 +341,7 @@ def update_post(
         "image_urls": post.image_urls,
         "attachments": post.attachments,
         "author": author_info,
+        "author_id": post.author_id,  # Always include author_id for delete permission check
         "translated_cache": post.translated_cache,
         "is_translated": post.is_translated,
         "is_anonymous": post.is_anonymous,

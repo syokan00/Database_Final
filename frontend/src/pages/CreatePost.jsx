@@ -276,13 +276,26 @@ const CreatePost = () => {
                                 <div className="form-group">
                                     <label className="form-label">価格（円）</label>
                                     <input
-                                        type="number"
+                                        type="text"
                                         className="form-input"
                                         placeholder="例：1000"
                                         value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
-                                        min="0"
-                                        step="1"
+                                        onChange={(e) => {
+                                            // Only allow numbers and empty string
+                                            const value = e.target.value;
+                                            if (value === '' || /^\d+$/.test(value)) {
+                                                setPrice(value);
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            // Ensure it's a valid number on blur
+                                            const value = e.target.value.trim();
+                                            if (value === '' || isNaN(value) || parseFloat(value) < 0) {
+                                                setPrice('');
+                                            } else {
+                                                setPrice(Math.floor(parseFloat(value)).toString());
+                                            }
+                                        }}
                                     />
                                     <small style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                                         💡 0円で「無料」、「相談可」なども可能

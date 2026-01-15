@@ -72,6 +72,7 @@ def check_badges_for_user(user_id: int, db: Session):
                                 break
         
         # 4. Translation Master (polyglot) - Posted in multiple languages
+        # Note: Since translation feature is disabled, check for posts with different source_language instead
         trans_badge = db.query(Badge).filter(Badge.name == 'polyglot').first()
         if trans_badge:
             has_badge = db.query(UserBadge).filter(
@@ -79,12 +80,10 @@ def check_badges_for_user(user_id: int, db: Session):
                 UserBadge.badge_id == trans_badge.id
             ).first()
             if not has_badge:
-                # Count posts that are translated
-                trans_count = db.query(Post).filter(
-                    Post.author_id == user_id, 
-                    Post.is_translated == True
-                ).count()
-                if trans_count >= 5:
+                # Check for posts with different source languages
+                posts = db.query(Post).filter(Post.author_id == user_id).all()
+                languages = set(p.source_language for p in posts if p.source_language)
+                if len(languages) >= 2:  # Posted in at least 2 different languages
                     db.add(UserBadge(user_id=user_id, badge_id=trans_badge.id))
 
         # 5. Popular (Likes) - heart_collector

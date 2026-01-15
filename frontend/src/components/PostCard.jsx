@@ -36,10 +36,10 @@ const PostCard = ({ post, highlight = false }) => {
     // Check if liked by current user
     const isLiked = post.liked_by_me || likedPostIds.includes(post.id);
     const isFavorited = post.favorited_by_me || favoritedPostIds.includes(post.id);
-    // Check if current user is the owner
-    const isOwner = user && post.author && (post.author.id === user.id || post.author_id === user.id);
-    const authorId = post.author?.id;
-    const isFollowingAuthor = !!user && !!authorId && (followingUserIds || []).includes(authorId);
+    // Check if current user is the owner (use author_id even for anonymous posts)
+    const isOwner = user && (post.author_id === user.id || (post.author && post.author.id === user.id));
+    const authorId = post.author?.id || post.author_id;
+    const isFollowingAuthor = !!user && !!authorId && post.author && (followingUserIds || []).includes(authorId);
     
     console.log('PostCard Debug:', {
         postId: post.id,
