@@ -52,52 +52,52 @@ def get_posts(
         user_id = current_user.id if current_user else None
         
         for p in posts:
-        # Check if liked
-        liked = False
-        if user_id:
-            liked = db.query(models.Like).filter(
-                models.Like.post_id == p.id, 
-                models.Like.user_id == user_id
-            ).first() is not None
+            # Check if liked
+            liked = False
+            if user_id:
+                liked = db.query(models.Like).filter(
+                    models.Like.post_id == p.id, 
+                    models.Like.user_id == user_id
+                ).first() is not None
+                
+            # Translation logic
+            # If requested lang is not source, check cache
+            # This logic is simplified for the response model
+            # The frontend usually requests the full object and decides what to show
+            # But here we can populate the 'content' field if we wanted to enforce lang
             
-        # Translation logic
-        # If requested lang is not source, check cache
-        # This logic is simplified for the response model
-        # The frontend usually requests the full object and decides what to show
-        # But here we can populate the 'content' field if we wanted to enforce lang
-        
-        # Check if favorited
-        favorited = False
-        if user_id:
-            favorited = db.query(models.Favorite).filter(
-                models.Favorite.post_id == p.id,
-                models.Favorite.user_id == user_id
-            ).first() is not None
-        
-        # Hide author information if post is anonymous
-        author_info = None if p.is_anonymous else p.author
-        
-        results.append({
-            "id": p.id,
-            "title": p.title,
-            "content": p.content, # Return original, let frontend switch
-            "source_language": p.source_language,
-            "category": p.category,
-            "tags": p.tags.split(",") if p.tags else [],
-            "restriction_type": p.restriction_type,
-            "image_urls": p.image_urls,  # Add image_urls
-            "attachments": p.attachments,  # Add file attachments
-            "author": author_info,
-            "author_id": p.author_id,  # Always include author_id for delete permission check
-            "translated_cache": p.translated_cache,
-            "is_translated": p.is_translated,
-            "is_anonymous": p.is_anonymous,
-            "likes": len(p.likes),
-            "liked_by_me": liked,
-            "favorited_by_me": favorited,
-            "comments": p.comments,
-            "created_at": p.created_at
-        })
+            # Check if favorited
+            favorited = False
+            if user_id:
+                favorited = db.query(models.Favorite).filter(
+                    models.Favorite.post_id == p.id,
+                    models.Favorite.user_id == user_id
+                ).first() is not None
+            
+            # Hide author information if post is anonymous
+            author_info = None if p.is_anonymous else p.author
+            
+            results.append({
+                "id": p.id,
+                "title": p.title,
+                "content": p.content, # Return original, let frontend switch
+                "source_language": p.source_language,
+                "category": p.category,
+                "tags": p.tags.split(",") if p.tags else [],
+                "restriction_type": p.restriction_type,
+                "image_urls": p.image_urls,  # Add image_urls
+                "attachments": p.attachments,  # Add file attachments
+                "author": author_info,
+                "author_id": p.author_id,  # Always include author_id for delete permission check
+                "translated_cache": p.translated_cache,
+                "is_translated": p.is_translated,
+                "is_anonymous": p.is_anonymous,
+                "likes": len(p.likes),
+                "liked_by_me": liked,
+                "favorited_by_me": favorited,
+                "comments": p.comments,
+                "created_at": p.created_at
+            })
         
         return results
     except Exception as e:
