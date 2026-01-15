@@ -4,10 +4,8 @@
 
 **デモ動画の URL をここに記載してください。**
 
-例:
-- YouTube: `https://www.youtube.com/watch?v=xxxxx`
-- Google Drive: `https://drive.google.com/file/d/xxxxx/view`
-- その他の動画ホスティングサービス
+- Google Drive: `[https://drive.google.com/file/d/xxxxx/view](https://drive.google.com/file/d/19iRrzMh1rWbMNFsGzqf5_V0XlIOtDM-T/view?usp=drive_link)`
+
 
 ## デモ動画の内容
 
@@ -145,4 +143,5 @@ https://syokan00.github.io/Database_Final/
 
 ### エンディング（6:00 - 6:30）
 「以上が、MemoLucky の主要機能のデモでした。このアプリケーションは、React と FastAPI で開発され、GitHub Pages にデプロイされています。今後は、リアルタイムチャットや通知システムなどの高度な機能を追加する予定です。ご視聴ありがとうございました。」
+
 
