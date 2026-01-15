@@ -40,14 +40,14 @@ const CreatePost = () => {
         }
     }, [location.state]);
 
+    const isItemMode = selectedCategory === 'items';
+
     // 当切换到商品模式时，自动取消匿名
     useEffect(() => {
         if (isItemMode && isAnonymous) {
             setIsAnonymous(false);
         }
-    }, [isItemMode]);
-
-    const isItemMode = selectedCategory === 'items';
+    }, [isItemMode, isAnonymous]);
 
     const handleImageUpload = async (e) => {
         const files = Array.from(e.target.files);
