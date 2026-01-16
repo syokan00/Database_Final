@@ -12,9 +12,9 @@ python-jose[cryptography]==3.3.0
 passlib[argon2]==1.7.4
 argon2-cffi
 
-# Data validation
-pydantic>=2.5.2,<3.0.0
-pydantic-settings>=2.1.0
+# Data validation (using versions with pre-built wheels)
+pydantic==2.9.2
+pydantic-settings==2.6.1
 
 # File handling
 python-multipart==0.0.6
