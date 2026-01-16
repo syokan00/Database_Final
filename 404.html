@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        // GitHub Pages 根目录 404 处理：重定向到应用
+        (function() {
+            const path = window.location.pathname;
+            const search = window.location.search;
+            const hash = window.location.hash;
+            
+            // 定义所有有效的路由
+            const validRoutes = [
+                'profile', 'create', 'notes', 'items', 'labs', 'jobs', 
+                'chat', 'badges', 'login', 'register', 'users'
+            ];
+            
+            // 提取路径名（去掉开头的 / 和结尾的 /）
+            let route = path.replace(/^\//, '').replace(/\/$/, '');
+            
+            // 如果路径是空的，重定向到应用首页
+            if (!route) {
+                window.location.replace('/Database_Final/#/' + (search || '') + (hash || ''));
+                return;
+            }
+            
+            // 如果路径是 Database_Final，重定向到应用首页
+            if (route === 'Database_Final') {
+                window.location.replace('/Database_Final/#/' + (search || '') + (hash || ''));
+                return;
+            }
+            
+            // 检查是否是有效路由
+            const isValidRoute = validRoutes.some(validRoute => 
+                route === validRoute || route.startsWith(validRoute + '/')
+            );
+            
+            if (isValidRoute) {
+                // 构建新的URL：/Database_Final/#/路由
+                let newUrl = '/Database_Final/#/' + route;
+                if (search) newUrl += search;
+                if (hash && !hash.startsWith('#')) newUrl += '#' + hash;
+                window.location.replace(newUrl);
+            } else {
+                // 未知路由，重定向到首页
+                window.location.replace('/Database_Final/#/');
+            }
+        })();
+    </script>
+</head>
+<body>
+    <p>正在重定向...</p>
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=/Database_Final/#/">
+        <p>如果页面没有自动跳转，请<a href="/Database_Final/#/">点击这里</a>。</p>
+    </noscript>
+</body>
+</html>
+
