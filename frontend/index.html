@@ -6,54 +6,45 @@
     <script>
       // 立即检查并重定向错误的 URL（同步执行，阻止页面渲染）
       (function() {
-        try {
-          const path = window.location.pathname;
-          const hostname = window.location.hostname;
+        const path = window.location.pathname;
+        const hostname = window.location.hostname;
+        
+        // 只在 GitHub Pages 域名上执行（生产环境）
+        if (hostname === 'syokan00.github.io' || hostname.endsWith('.github.io')) {
+          // 定义所有有效的路由
+          const validRoutes = [
+            'profile', 'create', 'notes', 'items', 'labs', 'jobs', 
+            'chat', 'badges', 'login', 'register', 'users'
+          ];
           
-          // 只在 GitHub Pages 域名上执行（生产环境）
-          if (hostname === 'syokan00.github.io' || hostname.endsWith('.github.io')) {
-            // 定义所有有效的路由
-            const validRoutes = [
-              'profile', 'create', 'notes', 'items', 'labs', 'jobs', 
-              'chat', 'badges', 'login', 'register', 'users'
-            ];
-            
-            // 提取路径名（去掉开头的 / 和结尾的 /）
-            let route = path.replace(/^\//, '').replace(/\/$/, '');
-            
-            // 如果不在 /Database_Final/ 路径下，需要重定向
-            if (!path.startsWith('/Database_Final/')) {
-              // 如果路径是有效路由，重定向到正确的 hash 路由
-              if (route && validRoutes.some(validRoute => 
-                route === validRoute || route.startsWith(validRoute + '/')
-              )) {
-                const search = window.location.search;
-                const hash = window.location.hash;
-                let newUrl = '/Database_Final/#/' + route;
-                if (search) newUrl += search;
-                if (hash && !hash.startsWith('#')) newUrl += '#' + hash;
-                // 使用 location.href 而不是 replace，确保立即跳转
-                window.location.href = newUrl;
-                // 阻止后续脚本执行
-                throw new Error('Redirecting');
-              } else if (route && route !== 'Database_Final' && route !== '') {
-                // 未知路由，重定向到首页
-                window.location.href = '/Database_Final/#/';
-                throw new Error('Redirecting');
-              }
-            }
-            
-            // 如果在 /Database_Final/ 路径下但没有 hash，添加默认 hash
-            if (path.startsWith('/Database_Final/') && !window.location.hash && path !== '/Database_Final/') {
-              window.location.href = '/Database_Final/#/';
-              throw new Error('Redirecting');
+          // 提取路径名（去掉开头的 / 和结尾的 /）
+          let route = path.replace(/^\//, '').replace(/\/$/, '');
+          
+          // 如果不在 /Database_Final/ 路径下，需要重定向
+          if (!path.startsWith('/Database_Final/')) {
+            // 如果路径是有效路由，重定向到正确的 hash 路由
+            if (route && validRoutes.some(validRoute => 
+              route === validRoute || route.startsWith(validRoute + '/')
+            )) {
+              const search = window.location.search;
+              const hash = window.location.hash;
+              let newUrl = '/Database_Final/#/' + route;
+              if (search) newUrl += search;
+              if (hash && !hash.startsWith('#')) newUrl += '#' + hash;
+              // 立即重定向，不等待
+              window.location.replace(newUrl);
+              return;
+            } else if (route && route !== 'Database_Final' && route !== '') {
+              // 未知路由，重定向到首页
+              window.location.replace('/Database_Final/#/');
+              return;
             }
           }
-        } catch (e) {
-          if (e.message === 'Redirecting') {
-            // 阻止页面继续加载
-            document.write('');
-            document.close();
+          
+          // 如果在 /Database_Final/ 路径下但没有 hash，添加默认 hash
+          if (path.startsWith('/Database_Final/') && !window.location.hash && path !== '/Database_Final/') {
+            window.location.replace('/Database_Final/#/');
+            return;
           }
         }
       })();
