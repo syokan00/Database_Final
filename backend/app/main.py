@@ -3,8 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from . import models, database, auth, posts, badges, comments, items, uploads, favorites, users, notifications, messages
 
-# Create tables (for dev simplicity, in prod use Alembic)
-models.Base.metadata.create_all(bind=database.engine)
+# Initialize database tables (delayed until after database connection is established)
+def init_database():
+    """Create all database tables if they don't exist"""
+    try:
+        models.Base.metadata.create_all(bind=database.engine)
+        print("Database tables initialized successfully")
+    except Exception as e:
+        print(f"Warning: Could not create tables (they may already exist): {e}")
+        # Don't fail startup if tables already exist
 
 # Auto-migrate: Add missing columns to existing tables
 def migrate_database():
@@ -34,7 +41,8 @@ def migrate_database():
     except Exception as e:
         print(f"Warning: Database migration encountered an error: {e}")
 
-# Run migrations on startup
+# Initialize database and run migrations on startup
+init_database()
 migrate_database()
 
 # Initialize badges data if not exists
