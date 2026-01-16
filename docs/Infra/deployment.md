@@ -15,6 +15,7 @@
 ### バックエンド（開発環境）
 - **ホスティング**: ローカル Docker Compose
 - **コンテナ**: FastAPI、PostgreSQL、MinIO、Redis
+- **データベース**: ローカル PostgreSQL または Supabase クラウドデータベース
 - **用途**: 開発・テスト用
 
 ## ローカル開発環境のセットアップ
@@ -33,33 +34,59 @@ cd Database_Final
 ### 2. バックエンド環境のセットアップ
 
 #### 2.1 環境変数の設定
+
+**方法A：共有デモデータベースを使用（推奨 - 他の人が投稿した内容を閲覧可能）**
+
+プロジェクトルートで `.env` ファイルを作成：
 ```bash
-cd backend
+# Windows
+Copy-Item .env.example .env
+
+# Linux/Mac
 cp .env.example .env
 ```
 
-`.env` ファイルを編集し、必要な環境変数を設定します：
+`.env` ファイルを開き、以下の行が有効になっていることを確認：
 ```env
-# データベース設定
-DB_USERNAME=dbuser
-DB_PASSWORD=dbpassword
-DB_HOST=localhost
-DB_NAME=memolucky
+DATABASE_URL=postgresql://readonly_demo:demo_readonly_2024@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
+```
 
-# JWT 設定
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+⚠️ **注意**: これは読み取り専用データベースです。他のユーザーの投稿を閲覧できますが、ユーザー登録や投稿はできません。
+
+**方法B：ローカルデータベースを使用（完全な機能、データは共有されません）**
+
+`.env` ファイルでローカルデータベースの行のコメントを解除：
+```env
+DATABASE_URL=postgresql://postgres:changeme@db:5432/memoluck
+```
+
+**方法C：完全アクセス共有データベース（プロジェクトメンテナーに問い合わせ）**
+
+完全な機能（登録、投稿など）が必要な場合、プロジェクトメンテナーに連絡して接続文字列を取得してください。
+
+#### 環境変数の完全なリスト
+
+`.env.example` ファイルには以下の環境変数が含まれています：
+
+```env
+# データベース設定（上記のいずれかを選択）
+DATABASE_URL=postgresql://...
+
+# ローカルデータベース設定（Option 1 を選択した場合のみ使用）
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=changeme
+POSTGRES_DB=memoluck
+
+# Redis 設定
+REDIS_URL=redis://redis:6379/0
 
 # MinIO 設定
 MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=minioadmin
-MINIO_ENDPOINT=localhost
-MINIO_PORT=9000
+MINIO_ROOT_PASSWORD=changeme
+MINIO_BUCKET=memoluck-files
 
-# Redis 設定
-REDIS_HOST=localhost
-REDIS_PORT=6379
+# JWT 設定
+JWT_SECRET=changeme-in-production
 ```
 
 #### 2.2 Docker Compose の起動
@@ -75,10 +102,21 @@ docker-compose up -d
 - FastAPI（ポート 8000）
 
 #### 2.3 データベースの初期化
+
+**自動マイグレーション（推奨）**
+
+バックエンド起動時に自動的にデータベースマイグレーションが実行されます。以下のログで確認できます：
+
 ```bash
-# データベースマイグレーション（必要に応じて）
-docker-compose exec backend alembic upgrade head
+docker-compose logs backend | Select-String "migration"
+# または Linux/Mac: docker-compose logs backend | grep "migration"
 ```
+
+`Database migration completed successfully` が表示されれば成功です。
+
+**手動マイグレーション（Supabase を使用する場合）**
+
+Supabase クラウドデータベースを使用する場合は、Supabase Dashboard → SQL Editor で `db/init.sql` の内容を実行してください。
 
 ### 3. フロントエンド環境のセットアップ
 
@@ -161,12 +199,31 @@ export default defineConfig(({ mode }) => ({
 - 本番環境: GitHub Actions の Secrets または Variables で設定
 
 ### バックエンド
-- 開発環境: `.env` ファイル（Git にコミットしない）
+- 開発環境: `.env` ファイル（プロジェクトルート、Git にコミットしない）
 - 本番環境: 環境変数またはシークレット管理サービス（AWS Secrets Manager など）
 
 ### 機密情報の扱い
 - `.env` ファイルは `.gitignore` に追加されている
-- `.env.example` ファイルにテンプレートを用意（機密情報は含めない）
+- `.env.example` ファイルにテンプレートを用意
+- **共有デモデータベースのパスワード**: 読み取り専用のため、公開しても安全です
+- **完全アクセスデータベースのパスワード**: 絶対に公開しないでください
+
+### データベース接続オプション
+
+1. **ローカルデータベース** (`DATABASE_URL=postgresql://postgres:changeme@db:5432/memoluck`)
+   - データはローカルのみに保存
+   - 他のコンピューターとは共有されない
+   - 完全な機能が利用可能
+
+2. **共有デモデータベース（読み取り専用）** (`.env.example` にデフォルト設定)
+   - 他のユーザーの投稿を閲覧可能
+   - ユーザー登録や投稿は不可（読み取り専用）
+   - パスワードは公開されており、安全に使用可能
+
+3. **完全アクセス共有データベース** (プロジェクトメンテナーに問い合わせ)
+   - 他のユーザーの投稿を閲覧可能
+   - ユーザー登録や投稿も可能
+   - 接続文字列は非公開（機密情報）
 
 ## トラブルシューティング
 
