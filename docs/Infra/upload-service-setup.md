@@ -12,28 +12,100 @@
 
 **解决方案**：
 
-#### 选项 A：配置 MinIO（推荐用于生产环境）
+#### 选项 A：配置 MinIO（免费计划）
 
-1. **在 Render 上创建 MinIO 服务**（或使用其他云存储服务）
-   - 访问 [Render Dashboard](https://dashboard.render.com)
-   - 创建新的 **Private Service**
-   - 使用 Docker 镜像：`minio/minio:latest`
-   - 设置环境变量：
-     ```
-     MINIO_ROOT_USER=your_access_key
-     MINIO_ROOT_PASSWORD=your_secret_key
-     ```
-   - 启动命令：`minio server /data --console-address ":9001"`
+**重要提示**：Render 免费计划的服务会在不活动时休眠，这会影响 MinIO 的可用性。但对于学习和测试，这是可行的方案。
 
-2. **在后端服务中配置环境变量**：
+##### 步骤 1：在 Render 上创建 MinIO 服务
+
+1. **访问 Render Dashboard**
+   - 前往 [Render Dashboard](https://dashboard.render.com)
+   - 点击 **New** → **Private Service**
+
+2. **基本配置**
+   - **Name**: `memolucky-minio`（或任何你喜欢的名称）
+   - **Language**: `Docker`
+   - **Branch**: `main`
+   - **Region**: `Singapore (Southeast Asia)`（与后端服务同一区域）
+   - **Instance Type**: `Free`（免费计划）
+
+3. **Docker 配置**
+   - **Dockerfile Path**: `minio/Dockerfile`
+   - **Docker Command**: （留空，使用 Dockerfile 中的 CMD）
+
+4. **环境变量**（点击 Add Environment Variable）
    ```
-   MINIO_ENDPOINT=your-minio-service.onrender.com:9000
-   MINIO_ACCESS_KEY=your_access_key
-   MINIO_SECRET_KEY=your_secret_key
+   MINIO_ROOT_USER=minioadmin
+   MINIO_ROOT_PASSWORD=[生成一个强密码，例如：Memoluck2024!Secure]
+   ```
+   
+   **生成密码的方法**：
+   - 使用在线工具：https://www.random.org/passwords/
+   - 或使用 PowerShell：`-join ((65..90) + (97..122) + (48..57) | Get-Random -Count 16 | % {[char]$_})`
+
+5. **持久化存储（Disk）**
+   - 点击 **Add disk**
+   - **Name**: `minio-data`
+   - **Mount Path**: `/data`
+   - **Size**: `1 GB`（免费计划可能不支持，如果无法添加，可以跳过）
+   - ⚠️ **注意**：免费计划可能不支持持久化磁盘，数据可能会在服务重启后丢失
+
+6. **其他设置**
+   - **Auto-Deploy**: `On Commit`（保持默认）
+   - 点击 **Create Private Service**
+
+##### 步骤 2：获取 MinIO 服务地址
+
+部署完成后，在 Render Dashboard 中：
+1. 找到你的 MinIO 服务
+2. 查看服务详情
+3. 找到 **Internal URL**（内网地址，格式类似：`memolucky-minio:9000`）
+4. 找到 **Public URL**（如果有，格式类似：`https://memolucky-minio.onrender.com`）
+
+##### 步骤 3：在后端服务中配置环境变量
+
+1. 在 Render Dashboard 中找到你的后端服务（`memolucky-backend`）
+2. 进入 **Environment** 标签
+3. 添加以下环境变量：
+
+   ```
+   MINIO_ENDPOINT=memolucky-minio:9000
+   MINIO_ACCESS_KEY=minioadmin
+   MINIO_SECRET_KEY=[你刚才设置的 MINIO_ROOT_PASSWORD]
    MINIO_BUCKET=memoluck-files
-   MINIO_EXTERNAL_URL=https://your-minio-service.onrender.com
-   MINIO_SECURE=true  # 如果使用 HTTPS
+   MINIO_EXTERNAL_URL=https://memolucky-minio.onrender.com
+   MINIO_SECURE=false
    ```
+
+   **说明**：
+   - `MINIO_ENDPOINT`：使用内网地址（格式：`服务名:9000`）
+   - `MINIO_ACCESS_KEY`：与 `MINIO_ROOT_USER` 相同
+   - `MINIO_SECRET_KEY`：与 `MINIO_ROOT_PASSWORD` 相同
+   - `MINIO_EXTERNAL_URL`：如果 MinIO 有公网地址，使用公网地址；否则使用内网地址
+   - `MINIO_SECURE`：如果使用 HTTPS，设置为 `true`；否则 `false`
+
+4. 点击 **Save Changes**
+5. Render 会自动重新部署后端服务
+
+##### 步骤 4：验证配置
+
+1. 等待后端服务重新部署完成
+2. 检查后端日志，应该看到：
+   ```
+   MinIO connected successfully to memolucky-minio:9000/memoluck-files
+   ```
+3. 尝试在前端上传图片，应该可以成功
+
+##### 免费计划的限制
+
+⚠️ **重要提示**：
+- **服务休眠**：免费计划的服务在 15 分钟不活动后会休眠，首次访问需要等待 30-60 秒唤醒
+- **无持久化存储**：免费计划不支持持久化磁盘，数据可能在服务重启后丢失
+- **性能限制**：免费计划有 CPU 和内存限制，可能影响上传速度
+
+**建议**：
+- 如果只是学习和测试，免费计划可以使用
+- 如果需要生产环境，建议升级到付费计划（Starter $7/月）
 
 #### 选项 B：使用替代云存储服务
 
