@@ -37,13 +37,65 @@ def migrate_database():
 # Run migrations on startup
 migrate_database()
 
+# Initialize badges data if not exists
+def init_badges_data():
+    """Initialize badges data from init.sql"""
+    from .models import Badge
+    from sqlalchemy.orm import Session
+    
+    badges_data = [
+        ('first_post', 'First post created', '🥚'),
+        ('night_owl', 'Posted between 0:00-6:00', '⭐'),
+        ('streak_poster', 'Posted 5 days in a row', '🔥'),
+        ('polyglot', 'Posted in multiple languages', '💬'),
+        ('heart_collector', 'Received 10 likes', '❤️'),
+        ('comment_king', 'Posted 20 comments', '👑'),
+        ('helpful_friend', 'Comment liked 5 times', '🛡️'),
+        ('smart_buyer', 'Bought 3 items', '🛍️'),
+        ('top_seller', 'Sold 5 items', '🏷️'),
+        ('treasure_hunter', 'Found a rare item', '🧭'),
+        ('lucky_clover', 'Completed a random task', '⚡'),
+        ('heart_artist', 'Used like effect 10 times', '🎨'),
+        ('brave_beginner', 'First login', '👶'),
+        ('lost_scholar', 'Visited all pages', '🗺️'),
+    ]
+    
+    try:
+        db = next(database.get_db())
+        for name, description, icon in badges_data:
+            existing = db.query(Badge).filter(Badge.name == name).first()
+            if not existing:
+                badge = Badge(name=name, description=description, icon=icon)
+                db.add(badge)
+        db.commit()
+        print("Badges data initialized successfully")
+    except Exception as e:
+        print(f"Warning: Badges initialization encountered an error: {e}")
+    finally:
+        db.close()
+
+# Initialize badges on startup
+init_badges_data()
+
 app = FastAPI(title="Memolucky API")
 
-# CORS - Allow all origins in development
-# In production, you should restrict this to specific domains
+# CORS - Configure allowed origins
+# Allow GitHub Pages and local development
+import os
+allowed_origins = [
+    "https://syokan00.github.io",  # GitHub Pages production
+    "http://localhost:5173",        # Local Vite dev server
+    "http://localhost:3000",        # Local Docker frontend
+]
+
+# In development, allow all origins for easier testing
+# In production, use specific origins for security
+if os.getenv("ENVIRONMENT") != "production":
+    allowed_origins.append("*")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
