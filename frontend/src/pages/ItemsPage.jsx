@@ -67,8 +67,11 @@ const ItemsPage = () => {
                     </div>
                     <div className="filter-tags">
                         <button className={`filter-tag ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>すべて</button>
-                        <button className={`filter-tag ${filter === 'book' ? 'active' : ''}`} onClick={() => setFilter('book')}>教科書</button>
-                        <button className={`filter-tag ${filter === 'appliance' ? 'active' : ''}`} onClick={() => setFilter('appliance')}>家電</button>
+                        <button className={`filter-tag ${filter === 'textbook' ? 'active' : ''}`} onClick={() => setFilter('textbook')}>教科書</button>
+                        <button className={`filter-tag ${filter === 'electronics' ? 'active' : ''}`} onClick={() => setFilter('electronics')}>電子機器</button>
+                        <button className={`filter-tag ${filter === 'furniture' ? 'active' : ''}`} onClick={() => setFilter('furniture')}>家具</button>
+                        <button className={`filter-tag ${filter === 'clothing' ? 'active' : ''}`} onClick={() => setFilter('clothing')}>衣類</button>
+                        <button className={`filter-tag ${filter === 'sports' ? 'active' : ''}`} onClick={() => setFilter('sports')}>スポーツ用品</button>
                         <button className={`filter-tag ${filter === 'other' ? 'active' : ''}`} onClick={() => setFilter('other')}>その他</button>
                     </div>
                 </div>

@@ -10,31 +10,43 @@ router = APIRouter(prefix="/api/uploads", tags=["uploads"])
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
-if not MINIO_ACCESS_KEY or not MINIO_SECRET_KEY:
-    raise ValueError("MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables are required. Please set them in .env file.")
 MINIO_BUCKET = os.getenv("MINIO_BUCKET", "memoluck-files")
-MINIO_SECURE = False
+MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
 
 # External URL for browser access (adjust if deployed)
 # 使用主机的9002端口（docker-compose映射的端口）
 MINIO_EXTERNAL_URL = os.getenv("MINIO_EXTERNAL_URL", "http://localhost:9002")
 
-minio_client = Minio(
-    MINIO_ENDPOINT,
-    access_key=MINIO_ACCESS_KEY,
-    secret_key=MINIO_SECRET_KEY,
-    secure=MINIO_SECURE
-)
+# Initialize MinIO client only if credentials are provided
+minio_client = None
+MINIO_AVAILABLE = False
 
-# Ensure bucket exists
-try:
-    if not minio_client.bucket_exists(MINIO_BUCKET):
-        minio_client.make_bucket(MINIO_BUCKET)
-        # Set policy to public read for avatar display
-        policy = '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}' % MINIO_BUCKET
-        minio_client.set_bucket_policy(MINIO_BUCKET, policy)
-except Exception as e:
-    print(f"MinIO bucket check failed: {e}")
+if MINIO_ACCESS_KEY and MINIO_SECRET_KEY:
+    try:
+        minio_client = Minio(
+            MINIO_ENDPOINT,
+            access_key=MINIO_ACCESS_KEY,
+            secret_key=MINIO_SECRET_KEY,
+            secure=MINIO_SECURE
+        )
+        
+        # Test connection and ensure bucket exists
+        if not minio_client.bucket_exists(MINIO_BUCKET):
+            minio_client.make_bucket(MINIO_BUCKET)
+            # Set policy to public read for avatar display
+            policy = '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}' % MINIO_BUCKET
+            minio_client.set_bucket_policy(MINIO_BUCKET, policy)
+        
+        MINIO_AVAILABLE = True
+        print("MinIO initialized successfully")
+    except Exception as e:
+        print(f"MinIO initialization failed: {e}")
+        print("Upload functionality will be disabled. Please configure MinIO or use a cloud storage service.")
+        minio_client = None
+        MINIO_AVAILABLE = False
+else:
+    print("MinIO credentials not provided. Upload functionality will be disabled.")
+    MINIO_AVAILABLE = False
 
 @router.post("/avatar", response_model=schemas.UserOut)
 async def upload_avatar(
@@ -42,6 +54,12 @@ async def upload_avatar(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
 ):
+    if not MINIO_AVAILABLE or not minio_client:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure MinIO or contact the administrator."
+        )
+    
     # Validate file type
     if file.content_type not in ["image/jpeg", "image/png", "image/gif", "image/webp"]:
         raise HTTPException(status_code=400, detail="Invalid image type")
@@ -87,6 +105,12 @@ async def upload_cover(
     db: Session = Depends(database.get_db)
 ):
     """上传个人主页背景图"""
+    if not MINIO_AVAILABLE or not minio_client:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure MinIO or contact the administrator."
+        )
+    
     # Validate file type
     if file.content_type not in ["image/jpeg", "image/png", "image/gif", "image/webp"]:
         raise HTTPException(status_code=400, detail="Invalid image type")
@@ -131,6 +155,12 @@ async def upload_post_image(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     """上传帖子图片"""
+    if not MINIO_AVAILABLE or not minio_client:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure MinIO or contact the administrator."
+        )
+    
     # Validate file type
     allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
     if file.content_type not in allowed_types:
@@ -169,7 +199,7 @@ async def upload_post_image(
         
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="File upload failed")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
 @router.post("/file")
 async def upload_file(
@@ -177,6 +207,12 @@ async def upload_file(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     """上传任意类型文件（类似Discord）"""
+    if not MINIO_AVAILABLE or not minio_client:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure MinIO or contact the administrator."
+        )
+    
     import uuid
     
     # 文件类型分类和大小限制
@@ -267,6 +303,12 @@ async def get_presigned_url(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     """获取MinIO预签名URL（用于前端直接上传）"""
+    if not MINIO_AVAILABLE or not minio_client:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure MinIO or contact the administrator."
+        )
+    
     from datetime import timedelta
     import uuid
     
