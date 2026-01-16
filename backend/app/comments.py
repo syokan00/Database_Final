@@ -69,8 +69,10 @@ def create_comment(
     except Exception as e:
         print(f"Badge check failed after comment creation: {e}")
     
-    # Set rate limit
-    r.setex(key, 10, "1")
+    # Set rate limit (Redis) - optional
+    if redis_available and r:
+        key = f"comment_limit:{current_user.id}"
+        r.setex(key, 10, "1")
     
     return new_comment
 
