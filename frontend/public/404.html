@@ -5,25 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // GitHub Pages 404 处理：重定向到主应用
-        // 将所有404错误重定向到应用首页
-        const path = window.location.pathname;
-        
-        // 如果访问的是 /profile 或其他路径，重定向到正确的hash路由
-        if (path === '/profile' || path === '/profile/') {
-            window.location.replace('/Database_Final/#/profile');
-        } else if (path && path !== '/' && path !== '/Database_Final/' && path !== '/Database_Final') {
-            // 提取路径名（去掉开头的 /）
-            const route = path.replace(/^\//, '').replace(/\/$/, '');
-            if (route && route !== 'Database_Final') {
-                window.location.replace('/Database_Final/#/' + route);
+        // GitHub Pages 404 处理：智能重定向到正确的hash路由
+        (function() {
+            const path = window.location.pathname;
+            const search = window.location.search;
+            const hash = window.location.hash;
+            
+            // 定义所有有效的路由
+            const validRoutes = [
+                'profile', 'create', 'notes', 'items', 'labs', 'jobs', 
+                'chat', 'badges', 'login', 'register', 'users'
+            ];
+            
+            // 提取路径名（去掉开头的 / 和结尾的 /）
+            let route = path.replace(/^\//, '').replace(/\/$/, '');
+            
+            // 如果路径是空的或者是 Database_Final，重定向到首页
+            if (!route || route === 'Database_Final') {
+                window.location.replace('/Database_Final/#/' + (search || '') + (hash || ''));
+                return;
+            }
+            
+            // 检查是否是有效路由
+            const isValidRoute = validRoutes.some(validRoute => 
+                route === validRoute || route.startsWith(validRoute + '/')
+            );
+            
+            if (isValidRoute) {
+                // 构建新的URL：/Database_Final/#/路由
+                let newUrl = '/Database_Final/#/' + route;
+                if (search) newUrl += search;
+                if (hash && !hash.startsWith('#')) newUrl += '#' + hash;
+                window.location.replace(newUrl);
             } else {
+                // 未知路由，重定向到首页
                 window.location.replace('/Database_Final/#/');
             }
-        } else {
-            // 默认重定向到首页
-            window.location.replace('/Database_Final/#/');
-        }
+        })();
     </script>
 </head>
 <body>

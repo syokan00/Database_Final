@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import CreatePost from './pages/CreatePost';
@@ -20,6 +20,23 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { PostProvider } from './contexts/PostContext';
 import { initPWAInstallPrompt, initNetworkStatusListener } from './utils/pwa';
+
+// 路由守卫组件：确保URL格式正确
+function RouteGuard() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // 确保URL格式正确
+    const currentPath = window.location.pathname;
+    if (!currentPath.startsWith('/Database_Final/')) {
+      const hash = location.pathname;
+      const search = window.location.search;
+      window.history.replaceState(null, '', `/Database_Final/#${hash}${search}`);
+    }
+  }, [location]);
+  
+  return null;
+}
 
 function App() {
   useEffect(() => {
@@ -44,6 +61,7 @@ function App() {
       <AuthProvider>
         <PostProvider>
           <Router>
+            <RouteGuard />
             <div className="app">
               <Navbar />
               <PWAInstallPrompt />
