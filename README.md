@@ -105,7 +105,7 @@ cd Database_Final
 
 2. `.env` ファイルを開き、以下の行が有効になっていることを確認：
    ```env
-   DATABASE_URL=postgresql://readonly_demo:demo_readonly_2024@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
+   DATABASE_URL=postgresql://readonly_demo:demo_readonly_2025@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
    ```
    
    ⚠️ **注意**: これは読み取り専用データベースです。他のユーザーの投稿を閲覧できますが、ユーザー登録や投稿はできません。
