@@ -30,12 +30,14 @@ async def upload_avatar(
     if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary). Check backend logs for details."
         )
     
     try:
         # Upload using storage abstraction layer
+        print(f"Starting avatar upload for user {current_user.id}, object_name: {object_name}")
         avatar_url = await storage_upload_file(file, object_name, file.content_type)
+        print(f"Avatar upload successful, URL: {avatar_url}")
         
         # Update user profile
         current_user.avatar_url = avatar_url
@@ -45,8 +47,11 @@ async def upload_avatar(
         return current_user
         
     except Exception as e:
-        print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
+        error_msg = str(e)
+        print(f"Avatar upload failed: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"File upload failed: {error_msg}")
 
 @router.post("/cover", response_model=schemas.UserOut)
 async def upload_cover(
@@ -116,12 +121,14 @@ async def upload_post_image(
     if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary). Check backend logs for details."
         )
     
     try:
         # Upload using storage abstraction layer
+        print(f"Starting post image upload for user {current_user.id}, object_name: {object_name}")
         image_url = await storage_upload_file(file, object_name, file.content_type)
+        print(f"Post image upload successful, URL: {image_url}")
         
         return {
             "url": image_url,
@@ -130,8 +137,11 @@ async def upload_post_image(
         }
         
     except Exception as e:
-        print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
+        error_msg = str(e)
+        print(f"Post image upload failed: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"File upload failed: {error_msg}")
 
 @router.post("/file")
 async def upload_file(

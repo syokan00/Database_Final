@@ -154,20 +154,31 @@ async def upload_file(file: UploadFile, object_name: str, content_type: str) -> 
     返回文件的公开访问 URL
     """
     if not storage_available or not storage_client:
-        raise Exception("Storage backend is not available")
+        error_msg = f"Storage backend is not available. STORAGE_TYPE={STORAGE_TYPE}, storage_available={storage_available}"
+        print(error_msg)
+        raise Exception(error_msg)
+    
+    # 保存文件名（在读取前）
+    filename = file.filename or "file"
     
     # 读取文件内容
     file_content = await file.read()
     file_size = len(file_content)
     
-    if storage_type_used == "minio":
-        return await _upload_to_minio(file_content, object_name, content_type, file_size)
-    elif storage_type_used == "supabase":
-        return await _upload_to_supabase(file_content, object_name, content_type)
-    elif storage_type_used == "cloudinary":
-        return await _upload_to_cloudinary(file_content, object_name, content_type, file.filename)
-    else:
-        raise Exception(f"Unknown storage type: {storage_type_used}")
+    print(f"Uploading file: {filename}, size: {file_size} bytes, type: {storage_type_used}")
+    
+    try:
+        if storage_type_used == "minio":
+            return await _upload_to_minio(file_content, object_name, content_type, file_size)
+        elif storage_type_used == "supabase":
+            return await _upload_to_supabase(file_content, object_name, content_type)
+        elif storage_type_used == "cloudinary":
+            return await _upload_to_cloudinary(file_content, object_name, content_type, filename)
+        else:
+            raise Exception(f"Unknown storage type: {storage_type_used}")
+    except Exception as e:
+        print(f"Upload error in storage layer: {e}")
+        raise
 
 
 async def _upload_to_minio(file_content: bytes, object_name: str, content_type: str, file_size: int) -> str:
@@ -191,19 +202,26 @@ async def _upload_to_minio(file_content: bytes, object_name: str, content_type: 
 async def _upload_to_supabase(file_content: bytes, object_name: str, content_type: str) -> str:
     """上传到 Supabase Storage"""
     try:
+        print(f"Uploading to Supabase: bucket={SUPABASE_BUCKET}, path={object_name}")
+        
         # Supabase Storage 上传
-        # 注意：Supabase 的 upload 方法需要文件路径和文件内容
+        # upload 方法的参数：path, file, file_options
         response = storage_client.storage.from_(SUPABASE_BUCKET).upload(
             object_name,
             file_content,
             file_options={"content-type": content_type, "upsert": "true"}
         )
         
+        print(f"Supabase upload response: {response}")
+        
         # 获取公开 URL
-        public_url_response = storage_client.storage.from_(SUPABASE_BUCKET).get_public_url(object_name)
-        return public_url_response
+        public_url = storage_client.storage.from_(SUPABASE_BUCKET).get_public_url(object_name)
+        print(f"Supabase public URL: {public_url}")
+        return public_url
     except Exception as e:
-        raise Exception(f"Supabase upload failed: {str(e)}")
+        error_msg = f"Supabase upload failed: {str(e)}"
+        print(error_msg)
+        raise Exception(error_msg)
 
 
 async def _upload_to_cloudinary(file_content: bytes, object_name: str, content_type: str, filename: str) -> str:
