@@ -90,21 +90,39 @@ cd Database_Final
 
 **注意**: バックエンドサービスが起動していないと、ログイン・登録ができません。
 
-#### 環境変数の設定（オプション）
+#### 環境変数の設定
 
-もし手動で設定したい場合のみ：
+**方法A：共有デモデータベースを使用（推奨 - 他の人が投稿した内容を閲覧可能）**
 
-**Windows**:
-```bash
-cd backend
-copy env.example .env
-```
+1. プロジェクトルートで `.env` ファイルを作成：
+   ```bash
+   # Windows
+   Copy-Item .env.example .env
+   
+   # Linux/Mac
+   cp .env.example .env
+   ```
 
-**Linux/Mac**:
-```bash
-cd backend
-cp env.example .env
-```
+2. `.env` ファイルを開き、以下の行が有効になっていることを確認：
+   ```env
+   DATABASE_URL=postgresql://readonly_demo:demo_readonly_2024@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
+   ```
+   
+   ⚠️ **注意**: これは読み取り専用データベースです。他のユーザーの投稿を閲覧できますが、ユーザー登録や投稿はできません。
+
+**方法B：ローカルデータベースを使用（完全な機能、データは共有されません）**
+
+1. `.env` ファイルを作成（上記と同じ）
+2. `.env` ファイルでローカルデータベースの行のコメントを解除：
+   ```env
+   DATABASE_URL=postgresql://postgres:changeme@db:5432/memoluck
+   ```
+   
+   この方法では、データはローカルのみに保存され、他のコンピューターとは共有されません。
+
+**方法C：完全アクセス共有データベース（プロジェクトメンテナーに問い合わせ）**
+
+完全な機能（登録、投稿など）が必要な場合、プロジェクトメンテナーに連絡して接続文字列を取得してください。
 
 #### Docker Compose の起動（必須）
 ```bash
