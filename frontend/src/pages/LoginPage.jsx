@@ -23,8 +23,8 @@ const LoginPage = () => {
             const success = await login(email, password);
             if (success) {
                 setLoading(false);
-                // Force navigation and state update
-                window.location.href = '/profile';
+                // Use React Router navigate to ensure correct hash route
+                navigate('/profile');
             } else {
                 setLoading(false);
                 setError('ログインに失敗しました。メールアドレスとパスワードを確認してください。');
