@@ -6,21 +6,28 @@ import redis
 import os
 
 # Redis connection - optional
+# Set REDIS_ENABLED=false to completely disable Redis
+REDIS_ENABLED = os.getenv("REDIS_ENABLED", "true").lower() == "true"
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 redis_available = False
 r = None
 
-try:
-    r = redis.from_url(REDIS_URL, socket_connect_timeout=2, socket_timeout=2)
-    # Test connection
-    r.ping()
-    redis_available = True
-    print("Redis connected successfully (comments)")
-except Exception as e:
-    print(f"Redis connection failed (comments): {e}")
-    print("Redis features (rate limiting) will be disabled")
-    redis_available = False
-    r = None
+if REDIS_ENABLED:
+    try:
+        r = redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1, decode_responses=False)
+        # Test connection with very short timeout
+        r.ping()
+        redis_available = True
+        print("Redis connected successfully (comments)")
+    except Exception as e:
+        # Silently fail - Redis is optional
+        redis_available = False
+        r = None
+        # Only print if explicitly enabled to reduce log noise
+        if REDIS_ENABLED:
+            print(f"Redis connection failed (optional): {e}")
+else:
+    print("Redis is disabled via REDIS_ENABLED=false (comments)")
 
 router = APIRouter(prefix="/api/comments", tags=["comments"])
 
