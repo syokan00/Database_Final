@@ -74,6 +74,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 处理路由重定向：如果访问 /profile, /login 等路径，重定向到正确的 hash 路由
+  if (event.request.mode === 'navigate') {
+    const path = url.pathname;
+    const validRoutes = ['profile', 'create', 'notes', 'items', 'labs', 'jobs', 'chat', 'badges', 'login', 'register', 'users'];
+    
+    // 检查是否是根路径的路由（如 /profile, /login）
+    const route = path.replace(/^\//, '').replace(/\/$/, '');
+    
+    if (route && validRoutes.some(validRoute => route === validRoute || route.startsWith(validRoute + '/'))) {
+      // 如果不在 /Database_Final/ 路径下，重定向到正确的 hash 路由
+      if (!path.startsWith('/Database_Final/')) {
+        const search = url.search;
+        const hash = url.hash;
+        const newUrl = new URL(`/Database_Final/#/${route}${search}${hash}`, url.origin);
+        event.respondWith(Response.redirect(newUrl.toString(), 301));
+        return;
+      }
+    }
+  }
+
   // 只处理同源请求
   event.respondWith(
     fetch(event.request)

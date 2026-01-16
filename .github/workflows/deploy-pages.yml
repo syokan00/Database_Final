@@ -48,48 +48,10 @@ jobs:
             cp public/404.html dist/404.html || true
           fi
       
-      - name: Prepare deployment directory
-        working-directory: ..
-        run: |
-          # Create a deployment directory that combines dist and redirect files
-          mkdir -p deploy
-          # Copy dist contents to deploy/Database_Final/
-          cp -r frontend/dist deploy/Database_Final
-          # Create redirect HTML files in deploy root (accessible at /profile, /login, etc.)
-          cat > deploy/profile.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="ja">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Redirecting...</title>
-              <script>window.location.replace('/Database_Final/#/profile' + window.location.search + window.location.hash);</script>
-              <meta http-equiv="refresh" content="0; url=/Database_Final/#/profile">
-          </head>
-          <body><p>正在重定向...</p></body>
-          </html>
-          EOF
-          for route in create notes items labs jobs chat badges login register; do
-            cat > deploy/${route}.html << EOF
-          <!DOCTYPE html>
-          <html lang="ja">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Redirecting...</title>
-              <script>window.location.replace('/Database_Final/#/${route}' + window.location.search + window.location.hash);</script>
-              <meta http-equiv="refresh" content="0; url=/Database_Final/#/${route}">
-          </head>
-          <body><p>正在重定向...</p></body>
-          </html>
-          EOF
-          done
-      
       - name: Upload artifact
-        working-directory: ..
         uses: actions/upload-pages-artifact@v3
         with:
-          path: deploy
+          path: frontend/dist
 
   deploy:
     environment:
