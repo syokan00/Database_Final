@@ -10,9 +10,22 @@ from .services.badge_service import check_badges_for_user
 from .utils.restriction_validators import validate_restriction
 
 
-# Redis connection
+# Redis connection - optional
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
-r = redis.from_url(REDIS_URL)
+redis_available = False
+r = None
+
+try:
+    r = redis.from_url(REDIS_URL, socket_connect_timeout=2, socket_timeout=2)
+    # Test connection
+    r.ping()
+    redis_available = True
+    print("Redis connected successfully")
+except Exception as e:
+    print(f"Redis connection failed: {e}")
+    print("Redis features (rate limiting, caching) will be disabled")
+    redis_available = False
+    r = None
 
 
 
@@ -116,11 +129,12 @@ def create_post(
     current_user: models.User = Depends(auth.get_current_user),
     background_tasks: BackgroundTasks = None
 ):
-    # Rate limiting check (Redis)
-    # Limit: 1 post per 30 seconds
-    key = f"post_limit:{current_user.id}"
-    if r.get(key):
-        raise HTTPException(status_code=429, detail="Please wait 30 seconds before posting again.")
+    # Rate limiting check (Redis) - optional
+    if redis_available and r:
+        # Limit: 1 post per 30 seconds
+        key = f"post_limit:{current_user.id}"
+        if r.get(key):
+            raise HTTPException(status_code=429, detail="Please wait 30 seconds before posting again.")
     
     # Validate restriction rules
     if post.restriction_type:
@@ -157,7 +171,9 @@ def create_post(
     # NOTE: 已取消"翻译到当前语言"功能，暂不自动触发翻译任务
     
     # Set rate limit
-    r.setex(key, 30, "1")
+    # Set rate limit (Redis) - optional
+    if redis_available and r:
+        r.setex(key, 30, "1")
     
     # Hide author information if post is anonymous
     author_info = None if new_post.is_anonymous else current_user

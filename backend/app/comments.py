@@ -5,9 +5,22 @@ from .services.badge_service import check_badges_for_user
 import redis
 import os
 
-# Redis connection
+# Redis connection - optional
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
-r = redis.from_url(REDIS_URL)
+redis_available = False
+r = None
+
+try:
+    r = redis.from_url(REDIS_URL, socket_connect_timeout=2, socket_timeout=2)
+    # Test connection
+    r.ping()
+    redis_available = True
+    print("Redis connected successfully (comments)")
+except Exception as e:
+    print(f"Redis connection failed (comments): {e}")
+    print("Redis features (rate limiting) will be disabled")
+    redis_available = False
+    r = None
 
 router = APIRouter(prefix="/api/comments", tags=["comments"])
 
@@ -17,11 +30,12 @@ def create_comment(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    # Rate limiting (Redis)
-    # Limit: 1 comment per 10 seconds
-    key = f"comment_limit:{current_user.id}"
-    if r.get(key):
-        raise HTTPException(status_code=429, detail="Please wait 10 seconds before commenting again.")
+    # Rate limiting (Redis) - optional
+    if redis_available and r:
+        # Limit: 1 comment per 10 seconds
+        key = f"comment_limit:{current_user.id}"
+        if r.get(key):
+            raise HTTPException(status_code=429, detail="Please wait 10 seconds before commenting again.")
     
     post = db.query(models.Post).filter(models.Post.id == comment.post_id).first()
     if not post:
