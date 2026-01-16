@@ -6,8 +6,8 @@ import redis
 import os
 
 # Redis connection - optional
-# Set REDIS_ENABLED=false to completely disable Redis
-REDIS_ENABLED = os.getenv("REDIS_ENABLED", "true").lower() == "true"
+# Redis is disabled by default. Set REDIS_ENABLED=true to enable it.
+REDIS_ENABLED = os.getenv("REDIS_ENABLED", "false").lower() == "true"
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 redis_available = False
 r = None

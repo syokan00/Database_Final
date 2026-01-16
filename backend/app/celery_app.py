@@ -2,7 +2,8 @@ import os
 from celery import Celery
 
 # Check if Redis is enabled
-REDIS_ENABLED = os.getenv("REDIS_ENABLED", "true").lower() == "true"
+# Redis is disabled by default. Set REDIS_ENABLED=true to enable it.
+REDIS_ENABLED = os.getenv("REDIS_ENABLED", "false").lower() == "true"
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
 # Celery app - optional, only works if Redis is available
