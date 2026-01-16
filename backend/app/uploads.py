@@ -1,56 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status, Query
-from minio import Minio
-from minio.error import S3Error
 import os
 from datetime import datetime
 from . import auth, models, database, schemas
+from .storage import storage_available, upload_file as storage_upload_file
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/uploads", tags=["uploads"])
-
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
-MINIO_BUCKET = os.getenv("MINIO_BUCKET", "memoluck-files")
-MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
-MINIO_EXTERNAL_URL = os.getenv("MINIO_EXTERNAL_URL", "http://localhost:9002")
-
-# MinIO client - optional, will be None if not configured
-minio_client = None
-minio_available = False
-
-# Try to initialize MinIO if credentials are provided
-if MINIO_ACCESS_KEY and MINIO_SECRET_KEY:
-    try:
-        minio_client = Minio(
-            MINIO_ENDPOINT,
-            access_key=MINIO_ACCESS_KEY,
-            secret_key=MINIO_SECRET_KEY,
-            secure=MINIO_SECURE
-        )
-        # Test connection by checking bucket
-        if minio_client.bucket_exists(MINIO_BUCKET):
-            minio_available = True
-            print(f"MinIO connected successfully to {MINIO_ENDPOINT}/{MINIO_BUCKET}")
-        else:
-            # Try to create bucket
-            try:
-                minio_client.make_bucket(MINIO_BUCKET)
-                # Set policy to public read for avatar display
-                policy = '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}' % MINIO_BUCKET
-                minio_client.set_bucket_policy(MINIO_BUCKET, policy)
-                minio_available = True
-                print(f"MinIO bucket {MINIO_BUCKET} created successfully")
-            except Exception as e:
-                print(f"MinIO bucket creation failed: {e}")
-                minio_available = False
-    except Exception as e:
-        print(f"MinIO initialization failed: {e}")
-        print("Upload functionality will be disabled. Please configure MinIO or use alternative storage.")
-        minio_available = False
-else:
-    print("MinIO credentials not provided. Upload functionality will be disabled.")
-    print("To enable uploads, set MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables.")
 
 @router.post("/avatar", response_model=schemas.UserOut)
 async def upload_avatar(
@@ -72,24 +27,15 @@ async def upload_avatar(
     file_ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
     object_name = f"avatars/{current_user.id}_{uuid.uuid4()}.{file_ext}"
     
-    if not minio_available or not minio_client:
+    if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please contact the administrator or configure MinIO storage."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
         )
     
     try:
-        # Upload to MinIO
-        minio_client.put_object(
-            MINIO_BUCKET,
-            object_name,
-            file.file,
-            file.size,
-            content_type=file.content_type
-        )
-        
-        # Construct public URL
-        avatar_url = f"{MINIO_EXTERNAL_URL}/{MINIO_BUCKET}/{object_name}"
+        # Upload using storage abstraction layer
+        avatar_url = await storage_upload_file(file, object_name, file.content_type)
         
         # Update user profile
         current_user.avatar_url = avatar_url
@@ -98,12 +44,9 @@ async def upload_avatar(
         
         return current_user
         
-    except S3Error as e:
-        print(f"MinIO S3 error: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="File upload failed")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
 @router.post("/cover", response_model=schemas.UserOut)
 async def upload_cover(
@@ -126,24 +69,15 @@ async def upload_cover(
     file_ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
     object_name = f"covers/{current_user.id}_{uuid.uuid4()}.{file_ext}"
     
-    if not minio_available or not minio_client:
+    if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please contact the administrator or configure MinIO storage."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
         )
     
     try:
-        # Upload to MinIO
-        minio_client.put_object(
-            MINIO_BUCKET,
-            object_name,
-            file.file,
-            file.size,
-            content_type=file.content_type
-        )
-        
-        # Construct public URL
-        cover_url = f"{MINIO_EXTERNAL_URL}/{MINIO_BUCKET}/{object_name}"
+        # Upload using storage abstraction layer
+        cover_url = await storage_upload_file(file, object_name, file.content_type)
         
         # Update user profile
         current_user.cover_image_url = cover_url
@@ -152,12 +86,9 @@ async def upload_cover(
         
         return current_user
         
-    except S3Error as e:
-        print(f"MinIO S3 error: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="File upload failed")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
 @router.post("/post-image")
 async def upload_post_image(
@@ -182,24 +113,15 @@ async def upload_post_image(
     timestamp = datetime.now().strftime("%Y%m%d")
     object_name = f"posts/{current_user.id}/{timestamp}_{uuid.uuid4()}.{file_ext}"
     
-    if not minio_available or not minio_client:
+    if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please contact the administrator or configure MinIO storage."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
         )
     
     try:
-        # Upload to MinIO
-        minio_client.put_object(
-            MINIO_BUCKET,
-            object_name,
-            file.file,
-            file.size,
-            content_type=file.content_type
-        )
-        
-        # Construct public URL
-        image_url = f"{MINIO_EXTERNAL_URL}/{MINIO_BUCKET}/{object_name}"
+        # Upload using storage abstraction layer
+        image_url = await storage_upload_file(file, object_name, file.content_type)
         
         return {
             "url": image_url,
@@ -207,12 +129,9 @@ async def upload_post_image(
             "size": file.size
         }
         
-    except S3Error as e:
-        print(f"MinIO S3 error: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="File upload failed")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
 @router.post("/file")
 async def upload_file(
@@ -279,24 +198,15 @@ async def upload_file(
     safe_filename = file.filename.replace(' ', '_')
     object_name = f"files/{current_user.id}/{file_category}/{timestamp}_{uuid.uuid4()}{file_ext}"
     
-    if not minio_available or not minio_client:
+    if not storage_available:
         raise HTTPException(
             status_code=503, 
-            detail="File upload service is not available. Please contact the administrator or configure MinIO storage."
+            detail="File upload service is not available. Please configure storage backend (MinIO, Supabase, or Cloudinary)."
         )
     
     try:
-        # 上传到MinIO
-        minio_client.put_object(
-            MINIO_BUCKET,
-            object_name,
-            file.file,
-            file.size if file.size else -1,
-            content_type=file.content_type
-        )
-        
-        # 构建公共URL
-        file_url = f"{MINIO_EXTERNAL_URL}/{MINIO_BUCKET}/{object_name}"
+        # Upload using storage abstraction layer
+        file_url = await storage_upload_file(file, object_name, file.content_type)
         
         return {
             "url": file_url,
@@ -306,21 +216,34 @@ async def upload_file(
             "category": file_category
         }
         
-    except S3Error as e:
-        print(f"MinIO S3 error: {e}")
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="File upload failed")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
 @router.post("/presign")
 async def get_presigned_url(
     filename: str = Query(...),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    """获取MinIO预签名URL（用于前端直接上传）"""
+    """获取预签名URL（用于前端直接上传）- 仅支持 MinIO"""
     from datetime import timedelta
     import uuid
+    from .storage import storage_type_used, storage_client
+    from minio.error import S3Error
+    import os
+    
+    if not storage_available:
+        raise HTTPException(
+            status_code=503, 
+            detail="File upload service is not available. Please configure storage backend."
+        )
+    
+    # Presigned URL 目前只支持 MinIO
+    if storage_type_used != "minio":
+        raise HTTPException(
+            status_code=400,
+            detail="Presigned URLs are only supported with MinIO storage backend."
+        )
     
     # Validate file extension
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf']
@@ -332,15 +255,12 @@ async def get_presigned_url(
     timestamp = datetime.now().strftime("%Y%m%d")
     object_name = f"posts/{current_user.id}/{timestamp}_{uuid.uuid4()}{file_ext}"
     
-    if not minio_available or not minio_client:
-        raise HTTPException(
-            status_code=503, 
-            detail="File upload service is not available. Please contact the administrator or configure MinIO storage."
-        )
-    
     try:
+        MINIO_BUCKET = os.getenv("MINIO_BUCKET", "memoluck-files")
+        MINIO_EXTERNAL_URL = os.getenv("MINIO_EXTERNAL_URL", "http://localhost:9002")
+        
         # Generate presigned URL (valid for 1 hour)
-        presigned_url = minio_client.presigned_put_object(
+        presigned_url = storage_client.presigned_put_object(
             MINIO_BUCKET,
             object_name,
             expires=timedelta(hours=1)
