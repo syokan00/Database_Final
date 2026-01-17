@@ -120,10 +120,33 @@ def _init_supabase() -> Tuple[Optional[object], bool]:
             return None, False
         
         print(f"   Creating Supabase client with URL: {SUPABASE_URL[:30]}...")
-        # Use create_client - it should work with supabase==2.4.0
-        # If proxy error occurs, it's a library version issue
-        client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("   Supabase client created successfully")
+        # Use create_client with explicit options to avoid proxy parameter issue
+        # Some versions have issues with proxy parameter being passed incorrectly
+        try:
+            # Try standard create_client first
+            client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+            print("   Supabase client created successfully")
+        except TypeError as e:
+            if "proxy" in str(e).lower():
+                print(f"   ⚠️  proxy parameter error detected: {e}")
+                print("   Attempting workaround: creating client with ClientOptions...")
+                # Workaround: Use Client directly with ClientOptions
+                from supabase.client import Client, ClientOptions
+                options = ClientOptions(
+                    schema="public",
+                    auto_refresh_token=False,
+                    persist_session=False,
+                    local_storage=None,
+                    headers=None,
+                )
+                client = Client(
+                    supabase_url=SUPABASE_URL,
+                    supabase_key=SUPABASE_KEY,
+                    options=options
+                )
+                print("   Supabase client created successfully (using workaround)")
+            else:
+                raise
         
         # 测试连接 - 尝试列出 buckets
         try:
