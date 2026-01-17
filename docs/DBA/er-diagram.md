@@ -44,8 +44,8 @@
 - `restriction_type` (VARCHAR): 制限タイプ（例: 'no-kanji', 'emoji-only'）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
 - `attachments` (JSON): 添付ファイル（JSON 配列形式）
-- `translated_cache` (JSON): 翻訳キャッシュ（{"ja":"..","zh":"..","en":".."}）
-- `is_translated` (BOOLEAN, DEFAULT FALSE): 翻訳済みフラグ
+- `translated_cache` (JSON): 翻訳キャッシュ（現在は未使用）
+- `is_translated` (BOOLEAN, DEFAULT FALSE): 翻訳済みフラグ（現在は未使用）
 - `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名投稿フラグ
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
@@ -193,7 +193,7 @@
 
 ### 11. translations（翻訳）
 
-投稿の翻訳を管理するテーブルです（現在は未使用）。
+投稿の翻訳を管理するテーブルです。**現在は翻訳機能が実装されていないため、このテーブルは未使用です。**
 
 #### カラム定義
 - `id` (INTEGER, PRIMARY KEY): 翻訳 ID（自動採番）
@@ -204,6 +204,8 @@
 
 #### 制約
 - `post_id` は `posts.id` への外部キー
+
+**注意**: 翻訳機能は未実装のため、このテーブルと `posts` テーブルの `translated_cache`、`is_translated` フィールドは現在使用されていません。
 
 ### 12. item_messages（商品メッセージ）
 
@@ -396,8 +398,9 @@
 - **削除動作**: CASCADE
 
 ### 12. posts → translations（1 対 多）
-- **関係**: 1 つの投稿は複数の言語に翻訳される（現在は未使用）
+- **関係**: 1 つの投稿は複数の言語に翻訳される
 - **外部キー**: `translations.post_id` → `posts.id`
+- **注意**: 翻訳機能は未実装のため、現在は使用されていません
 
 ### 13. items → item_messages（1 対 多）
 - **関係**: 1 つのアイテムには複数のメッセージが送られる
