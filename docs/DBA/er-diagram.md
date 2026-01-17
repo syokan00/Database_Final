@@ -44,8 +44,6 @@
 - `restriction_type` (VARCHAR): 制限タイプ（例: 'no-kanji', 'emoji-only'）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
 - `attachments` (JSON): 添付ファイル（JSON 配列形式）
-- `translated_cache` (JSON): 翻訳キャッシュ（現在は未使用）
-- `is_translated` (BOOLEAN, DEFAULT FALSE): 翻訳済みフラグ（現在は未使用）
 - `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名投稿フラグ
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
@@ -67,7 +65,6 @@
 - `tags` (TEXT): タグ（カンマ区切り）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
 - `contact_method` (TEXT): 連絡方法
-- `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名出品フラグ（現在は未使用。商品取引は匿名不可のため、常に FALSE）
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
 #### 制約
@@ -191,23 +188,7 @@
 - `user_id` は `users.id` への外部キー
 - `badge_id` は `badges.id` への外部キー
 
-### 11. translations（翻訳）
-
-投稿の翻訳を管理するテーブルです。**現在は翻訳機能が実装されていないため、このテーブルは未使用です。**
-
-#### カラム定義
-- `id` (INTEGER, PRIMARY KEY): 翻訳 ID（自動採番）
-- `post_id` (INTEGER, FOREIGN KEY → posts.id): 投稿 ID
-- `lang` (VARCHAR, NOT NULL): 翻訳言語
-- `translated_text` (TEXT, NOT NULL): 翻訳テキスト
-- `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
-
-#### 制約
-- `post_id` は `posts.id` への外部キー
-
-**注意**: 翻訳機能は未実装のため、このテーブルと `posts` テーブルの `translated_cache`、`is_translated` フィールドは現在使用されていません。
-
-### 12. item_messages（商品メッセージ）
+### 11. item_messages（商品メッセージ）
 
 商品に関する売り手と買い手のメッセージを管理するテーブルです。
 
@@ -379,17 +360,12 @@
 - **外部キー**: `favorites.post_id` → `posts.id`
 - **削除動作**: CASCADE
 
-### 12. posts → translations（1 対 多）
-- **関係**: 1 つの投稿は複数の言語に翻訳される
-- **外部キー**: `translations.post_id` → `posts.id`
-- **注意**: 翻訳機能は未実装のため、現在は使用されていません
-
-### 13. items → item_messages（1 対 多）
+### 12. items → item_messages（1 対 多）
 - **関係**: 1 つのアイテムには複数のメッセージが送られる
 - **外部キー**: `item_messages.item_id` → `items.id`
 - **削除動作**: CASCADE
 
-### 14. comments → comments（自己参照、階層構造）
+### 13. comments → comments（自己参照、階層構造）
 - **関係**: コメントは返信を持つことができる（親子関係）
 - **外部キー**: `comments.parent_id` → `comments.id`
 
@@ -428,6 +404,3 @@
 - `author_id` は保持される（削除権限のため）
 - 表示時は `author` 情報が `None` として返される
 - 投稿者本人のみが自分の匿名投稿を削除できる
-
-### items.is_anonymous
-- **現在は未使用**。商品取引は匿名不可のため、フロントエンドで常に `FALSE` に設定されます。データベースにはフィールドが存在しますが、機能は実装されていません。
