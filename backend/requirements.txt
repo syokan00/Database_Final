@@ -23,9 +23,8 @@ python-magic==0.4.27
 # Storage & Cache
 redis==5.0.1
 minio==7.2.0
-supabase==2.3.4
-postgrest==0.13.1
-storage3==0.7.4
+# Note: Supabase storage now uses HTTP API directly (httpx), not the Python client library
+# This avoids proxy parameter compatibility issues
 cloudinary==1.44.1
 
 # Async tasks

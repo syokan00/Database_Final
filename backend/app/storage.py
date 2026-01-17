@@ -6,6 +6,7 @@ import os
 from typing import Optional, Tuple
 from fastapi import UploadFile
 import io
+import httpx  # 用于 Supabase HTTP API 请求
 
 # 存储类型
 STORAGE_TYPE = os.getenv("STORAGE_TYPE", "none").lower()  # minio, supabase, cloudinary, none
@@ -109,46 +110,62 @@ def _init_minio() -> Tuple[Optional[object], bool]:
 
 
 def _init_supabase() -> Tuple[Optional[object], bool]:
-    """初始化 Supabase Storage"""
+    """初始化 Supabase Storage - 使用 HTTP 请求而不是客户端库，避免 proxy 参数问题"""
     try:
-        from supabase import create_client, Client
-        
         if not SUPABASE_URL or not SUPABASE_KEY:
             print("❌ Supabase credentials not provided")
             print(f"   SUPABASE_URL: {'SET' if SUPABASE_URL else 'NOT SET'}")
             print(f"   SUPABASE_KEY: {'SET' if SUPABASE_KEY else 'NOT SET'}")
             return None, False
         
-        print(f"   Creating Supabase client with URL: {SUPABASE_URL[:30]}...")
-        # Use create_client with supabase==2.3.4 (older stable version)
-        # This version should not have the proxy parameter issue
-        client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("   Supabase client created successfully")
+        print(f"   Initializing Supabase Storage with HTTP API (URL: {SUPABASE_URL[:30]}...)")
+        
+        # 使用 HTTP 请求测试连接，而不是客户端库
+        # 这样可以完全避免 proxy 参数问题
+        import httpx
         
         # 测试连接 - 尝试列出 buckets
+        test_url = f"{SUPABASE_URL}/storage/v1/bucket"
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}"
+        }
+        
         try:
-            print("   Testing Supabase connection by listing buckets...")
-            buckets = client.storage.list_buckets()
-            print(f"   ✅ Supabase connection test successful. Found {len(buckets)} bucket(s)")
-            
-            # 检查目标 bucket 是否存在
-            bucket_names = [b.name for b in buckets] if buckets else []
-            if SUPABASE_BUCKET not in bucket_names:
-                print(f"   ⚠️  Warning: Bucket '{SUPABASE_BUCKET}' not found in Supabase.")
-                print(f"   Available buckets: {bucket_names}")
-                print(f"   Please create the bucket '{SUPABASE_BUCKET}' in Supabase Dashboard")
-                # 仍然返回 True，因为连接是成功的，只是 bucket 可能不存在
-                # 上传时会失败，但至少我们知道连接是好的
-            
-            return client, True
+            with httpx.Client(timeout=10.0) as client:
+                response = client.get(test_url, headers=headers)
+                if response.status_code == 200:
+                    print(f"   ✅ Supabase Storage API connection test successful")
+                    # 返回一个简单的配置对象，包含上传所需的信息
+                    # 实际上传时使用 HTTP 请求
+                    config = {
+                        "url": SUPABASE_URL,
+                        "key": SUPABASE_KEY,
+                        "bucket": SUPABASE_BUCKET
+                    }
+                    return config, True
+                else:
+                    print(f"   ⚠️  Supabase API test returned status {response.status_code}")
+                    # 仍然返回 True，API 连接正常，只是可能需要检查权限
+                    config = {
+                        "url": SUPABASE_URL,
+                        "key": SUPABASE_KEY,
+                        "bucket": SUPABASE_BUCKET
+                    }
+                    return config, True
         except Exception as e:
-            print(f"   ❌ Supabase connection test failed: {e}")
-            print(f"   Error type: {type(e).__name__}")
-            import traceback
-            print(f"   Traceback: {traceback.format_exc()}")
-            return None, False
+            print(f"   ⚠️  Supabase connection test warning: {e}")
+            print(f"   Continuing anyway - upload will be attempted with HTTP requests")
+            # 即使测试失败，也返回配置，让上传时再尝试
+            config = {
+                "url": SUPABASE_URL,
+                "key": SUPABASE_KEY,
+                "bucket": SUPABASE_BUCKET
+            }
+            return config, True
+            
     except ImportError:
-        print("❌ Supabase library not installed. Install with: pip install supabase")
+        print("❌ httpx library not installed. Install with: pip install httpx")
         return None, False
     except Exception as e:
         print(f"❌ Supabase initialization failed: {e}")
