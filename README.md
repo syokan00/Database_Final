@@ -2,153 +2,153 @@
 
 **Lucky for you — あなたに届く、誰かの経験。**
 
-> A full-stack campus life support platform for university students
+> 大学生向けキャンパスライフ支援プラットフォーム
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live-brightgreen)](https://syokan00.github.io/Database_Final/)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/syokan00/Database_Final)
+[![Live Demo](https://img.shields.io/badge/Demo-公開中-brightgreen)](https://syokan00.github.io/Database_Final/)
+[![GitHub](https://img.shields.io/badge/GitHub-リポジトリ-blue)](https://github.com/syokan00/Database_Final)
 
-## 📖 Project Overview
+## 📖 プロジェクト概要
 
-**MemoLucky** is a comprehensive web application designed to help university students share experiences, trade items, and exchange valuable information about campus life. The platform enables students to connect with seniors, learn from real experiences, and build a supportive community.
+**MemoLucky** は、大学生がキャンパスライフで必要な情報を共有し、助け合えるコミュニティを構築することを目的とした Web アプリケーションです。先輩たちのリアルな経験談、フリマ、研究室情報、就活情報などを一元的に管理・閲覧できます。
 
-### Vision
-**"Lucky for you — あなたに届く、誰かの経験。"** (Your luck arrives through someone else's experience.)
+### ビジョン
+**"Lucky for you — あなたに届く、誰かの経験。"**
 
-We believe that the best knowledge comes from real experiences shared by those who have walked the same path. MemoLucky bridges the gap between students at different stages of their university journey.
-
----
-
-## ✨ Key Features
-
-### 📝 Experience Sharing (Notes)
-- Share and browse authentic experiences from seniors
-- Search and filter by tags, categories, and keywords
-- Like and favorite posts
-- Comment and engage in discussions
-- Rich media support (images, attachments)
-
-### 🛍️ Campus Marketplace (Items)
-- Buy and sell second-hand items (textbooks, appliances, etc.)
-- Item categories: textbooks, appliances, and more
-- Advanced filtering by category, status, and price
-- Edit and manage your own listings
-- Real-time item status updates
-
-### 🧪 Research Lab Information (Labs)
-- Browse information about different research laboratories
-- Read experiences and reviews from lab members
-- Find the perfect lab for your interests
-
-### 💼 Job Hunting Resources (Jobs)
-- Access job hunting experiences and insights
-- Learn from senior students' interview experiences
-- Company and position information sharing
-
-### 👤 User Management
-- Secure registration and login (JWT authentication)
-- Comprehensive profile management (avatar, cover image, bio)
-- User profile browsing and following system
-- Followers/following lists
-
-### 🔔 Notification System
-- Real-time notifications for likes, comments, follows, and messages
-- Read/unread status management (individual and bulk)
-- Smart navigation to related content
-- Notification center with filtering
-
-### 💬 Messaging & Chat
-- Direct messaging between users
-- Item-specific chat for marketplace transactions
-- Real-time message delivery
-
-### 🏆 Achievement Badge System
-- Earn badges based on activity and achievements
-- Badges include: First Post, Night Owl, Streak Poster, Polyglot, Heart Collector, Comment King, Top Seller, and more
-- Display badges on your profile
-
-### 🌐 Internationalization
-- Multi-language support (Japanese, Chinese, English)
-- Language switching interface
-
-### 📱 Progressive Web App (PWA)
-- Install as a mobile app
-- Offline support with service worker
-- Responsive design for all devices
+私たちは、同じ道を歩んできた人々が共有する実体験から、最も価値のある知識が生まれると信じています。MemoLucky は、大学の異なる段階にいる学生たちの間のギャップを埋める架け橋となります。
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ 主要機能
 
-### Frontend
-- **React** 19.2.0 - Modern UI library
-- **Vite** 7.2.4 - Lightning-fast build tool
-- **React Router** 7.9.6 - Client-side routing (HashRouter for GitHub Pages compatibility)
-- **Axios** 1.13.2 - HTTP client
-- **Context API** - State management (Auth, Language, Posts)
-- **PWA** - Service Worker for offline support
+### 📝 経験談共有（Notes）
+- 先輩の実体験を投稿・閲覧
+- タグ、カテゴリ、キーワードで検索・フィルタリング
+- いいね・お気に入り機能
+- コメント機能とディスカッション
+- リッチメディア対応（画像、添付ファイル）
 
-### Backend
-- **FastAPI** 0.104.1 - High-performance Python web framework
-- **PostgreSQL** - Robust relational database
-- **SQLAlchemy** 2.0.23 - Modern Python ORM
-- **Pydantic** 2.9.2 - Data validation
-- **JWT** - Secure token-based authentication
-- **Argon2** - Password hashing algorithm
+### 🛍️ キャンパスフリマ（Items）
+- 中古品の出品・購入（教科書、家電など）
+- アイテムカテゴリ：教科書、家電、その他
+- カテゴリ、ステータス、価格での高度なフィルタリング
+- 出品アイテムの編集・管理
+- リアルタイムなアイテムステータス更新
 
-### Storage & Caching
-- **Supabase Storage** - Object storage for files and images (via HTTP API)
-- **Cloudinary** - Alternative image storage (25GB free tier)
-- **MinIO** - Self-hosted object storage option
-- **Redis** 5.0.1 - Caching and rate limiting (optional)
+### 🧪 研究室情報（Labs）
+- 各研究室の情報を閲覧
+- 研究室メンバーからの体験談やレビューを読む
+- 興味に合った研究室を見つける
 
-### Infrastructure & DevOps
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
-- **GitHub Pages** - Frontend static hosting
-- **Render** - Backend and database hosting
-- **GitHub Actions** - CI/CD automation
+### 💼 就活情報（Jobs）
+- 就活体験談やインサイトにアクセス
+- 先輩学生の面接体験から学ぶ
+- 企業・職種情報の共有
+
+### 👤 ユーザー管理
+- 安全なユーザー登録・ログイン（JWT 認証）
+- 包括的なプロフィール管理（アバター、カバー画像、自己紹介）
+- ユーザープロフィール閲覧とフォローシステム
+- フォロワー/フォロー中リスト
+
+### 🔔 通知システム
+- いいね、コメント、フォロー、メッセージのリアルタイム通知
+- 既読/未読状態の管理（個別・一括）
+- 関連コンテンツへのスマートナビゲーション
+- フィルタリング機能付き通知センター
+
+### 💬 メッセージング・チャット
+- ユーザー間の直接メッセージ
+- フリマ取引用のアイテム専用チャット
+- リアルタイムメッセージ配信
+
+### 🏆 実績バッジシステム
+- 活動と実績に基づいてバッジを獲得
+- バッジには以下が含まれます：初投稿、夜更かしの秀才、継続の達人、マルチリンガル、ハートコレクター、コメント王、トップセラーなど
+- プロフィールにバッジを表示
+
+### 🌐 国際化対応
+- 多言語サポート（日本語、中国語、英語）
+- 言語切り替えインターフェース
+
+### 📱 プログレッシブ Web アプリ（PWA）
+- モバイルアプリとしてインストール可能
+- Service Worker によるオフラインサポート
+- すべてのデバイスに対応したレスポンシブデザイン
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ 技術スタック
 
-### Prerequisites
-- **Docker** and **Docker Compose** installed
-- **Node.js** 18+ installed
-- **Git** installed
+### フロントエンド
+- **React** 19.2.0 - モダンな UI ライブラリ
+- **Vite** 7.2.4 - 超高速ビルドツール
+- **React Router** 7.9.6 - クライアントサイドルーティング（GitHub Pages 互換性のため HashRouter を使用）
+- **Axios** 1.13.2 - HTTP クライアント
+- **Context API** - 状態管理（認証、言語、投稿データ）
+- **PWA** - オフラインサポート用 Service Worker
 
-### 1. Clone Repository
+### バックエンド
+- **FastAPI** 0.104.1 - 高性能 Python Web フレームワーク
+- **PostgreSQL** - 堅牢なリレーショナルデータベース
+- **SQLAlchemy** 2.0.23 - モダンな Python ORM
+- **Pydantic** 2.9.2 - データバリデーション
+- **JWT** - 安全なトークンベース認証
+- **Argon2** - パスワードハッシュアルゴリズム
+
+### ストレージ・キャッシュ
+- **Supabase Storage** - ファイル・画像用オブジェクトストレージ（HTTP API 経由）
+- **Cloudinary** - 代替画像ストレージ（25GB 無料プラン）
+- **MinIO** - セルフホスト型オブジェクトストレージオプション
+- **Redis** 5.0.1 - キャッシュとレート制限（オプション）
+
+### インフラ・DevOps
+- **Docker** - コンテナ化
+- **Docker Compose** - マルチコンテナオーケストレーション
+- **GitHub Pages** - フロントエンド静的ホスティング
+- **Render** - バックエンドとデータベースホスティング
+- **GitHub Actions** - CI/CD 自動化
+
+---
+
+## 🚀 クイックスタート
+
+### 前提条件
+- **Docker** と **Docker Compose** がインストールされていること
+- **Node.js** 18 以上がインストールされていること
+- **Git** がインストールされていること
+
+### 1. リポジトリのクローン
 ```bash
 git clone https://github.com/syokan00/Database_Final.git
 cd Database_Final
 ```
 
-### 2. Backend Setup
+### 2. バックエンドのセットアップ
 
-#### Environment Variables
-Create a `.env` file in the project root:
+#### 環境変数の設定
+プロジェクトルートに `.env` ファイルを作成：
 
 ```bash
-# Copy example file
+# サンプルファイルをコピー
 cp .env.example .env  # Linux/Mac
-# or
+# または
 Copy-Item .env.example .env  # Windows
 ```
 
-#### Database Options
+#### データベースオプション
 
-**Option A: Use Shared Demo Database (Read-only)**
+**オプション A: 共有デモデータベースを使用（読み取り専用）**
 ```env
 DATABASE_URL=postgresql://readonly_demo:demo_readonly_2025@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
 ```
-⚠️ **Note**: This is read-only. You can browse posts but cannot register or create content.
+⚠️ **注意**: これは読み取り専用です。投稿を閲覧できますが、登録やコンテンツ作成はできません。
 
-**Option B: Use Local Database (Full functionality)**
+**オプション B: ローカルデータベースを使用（完全な機能）**
 ```env
 DATABASE_URL=postgresql://postgres:changeme@db:5432/memoluck
 ```
 
-#### Storage Configuration (Required for Uploads)
+#### ストレージ設定（アップロード機能に必須）
 ```env
 STORAGE_TYPE=supabase
 SUPABASE_URL=https://your-project.supabase.co
@@ -156,151 +156,151 @@ SUPABASE_KEY=your-anon-public-key
 SUPABASE_BUCKET=memoluck-files
 ```
 
-See [Storage Configuration Guide](docs/Infra/quick-storage-setup.md) for detailed setup.
+詳細な設定方法は [ストレージ設定ガイド](docs/Infra/quick-storage-setup.md) を参照してください。
 
-#### Start Backend Services
+#### バックエンドサービスの起動
 ```bash
 docker-compose up -d
 ```
-Backend will be available at `http://localhost:8000`
+バックエンドは `http://localhost:8000` で利用可能になります。
 
-### 3. Frontend Setup
+### 3. フロントエンドのセットアップ
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Frontend development server: `http://localhost:5173`
+フロントエンド開発サーバー: `http://localhost:5173`
 
 ---
 
-## 🌐 Deployment
+## 🌐 デプロイメント
 
-### Production Environment
+### 本番環境
 
-- **Frontend**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
-- **Backend API**: Render.com
-- **Database**: Render PostgreSQL
-- **Storage**: Supabase Storage / Cloudinary
+- **フロントエンド**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
+- **バックエンド API**: Render.com
+- **データベース**: Render PostgreSQL
+- **ストレージ**: Supabase Storage / Cloudinary
 
-### Deployment Documentation
-Detailed deployment guides are available in [docs/Infra/](docs/Infra/):
-- [Complete Deployment Guide](docs/Infra/deployment.md)
-- [Storage Setup Guide](docs/Infra/quick-storage-setup.md)
-- [Troubleshooting Guide](docs/Infra/storage-troubleshooting.md)
+### デプロイメントドキュメント
+詳細なデプロイメントガイドは [docs/Infra/](docs/Infra/) にあります：
+- [完全なデプロイメントガイド](docs/Infra/deployment.md)
+- [ストレージ設定ガイド](docs/Infra/quick-storage-setup.md)
+- [トラブルシューティングガイド](docs/Infra/storage-troubleshooting.md)
 
 ---
 
-## 📁 Project Structure
+## 📁 プロジェクト構成
 
 ```
 Database_Final/
-├── frontend/                 # React frontend application
+├── frontend/                 # React フロントエンドアプリケーション
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── contexts/        # React Context providers
-│   │   ├── pages/          # Page components
-│   │   ├── api/            # API client utilities
-│   │   ├── i18n/           # Internationalization
-│   │   └── utils/          # Helper functions
-│   ├── public/             # Static assets
+│   │   ├── components/      # 再利用可能な UI コンポーネント
+│   │   ├── contexts/        # React Context プロバイダー
+│   │   ├── pages/          # ページコンポーネント
+│   │   ├── api/            # API クライアントユーティリティ
+│   │   ├── i18n/           # 国際化
+│   │   └── utils/          # ヘルパー関数
+│   ├── public/             # 静的アセット
 │   └── package.json
 │
-├── backend/                 # FastAPI backend application
+├── backend/                 # FastAPI バックエンドアプリケーション
 │   ├── app/
-│   │   ├── main.py         # Application entry point
-│   │   ├── models.py       # Database models
-│   │   ├── schemas.py      # Pydantic schemas
-│   │   ├── auth.py         # Authentication endpoints
-│   │   ├── posts.py        # Post management
-│   │   ├── items.py        # Marketplace items
-│   │   ├── uploads.py      # File upload handling
-│   │   ├── storage.py      # Storage abstraction layer
-│   │   └── ...            # Other API modules
+│   │   ├── main.py         # アプリケーションエントリーポイント
+│   │   ├── models.py       # データベースモデル
+│   │   ├── schemas.py      # Pydantic スキーマ
+│   │   ├── auth.py         # 認証エンドポイント
+│   │   ├── posts.py        # 投稿管理
+│   │   ├── items.py        # フリマアイテム
+│   │   ├── uploads.py      # ファイルアップロード処理
+│   │   ├── storage.py      # ストレージ抽象化レイヤー
+│   │   └── ...            # その他の API モジュール
 │   ├── requirements.txt
 │   └── Dockerfile
 │
-├── docs/                    # Project documentation
-│   ├── BA/                 # Business Analysis
-│   ├── Architect/          # System Architecture
-│   ├── DBA/                # Database Administration
-│   ├── Infra/              # Infrastructure & Deployment
-│   └── PM/                 # Project Management
+├── docs/                    # プロジェクトドキュメント
+│   ├── BA/                 # ビジネス分析
+│   ├── Architect/          # システムアーキテクチャ
+│   ├── DBA/                # データベース管理
+│   ├── Infra/              # インフラ・デプロイメント
+│   └── PM/                 # プロジェクト管理
 │
-├── docker-compose.yml       # Docker Compose configuration
-└── README.md               # This file
+├── docker-compose.yml       # Docker Compose 設定
+└── README.md               # このファイル
 ```
 
 ---
 
-## 📚 Documentation
+## 📚 ドキュメント
 
-### Project Management
-- [Application Overview](docs/PM/app-overview.md)
-- [Project Report](docs/PM/project-report.md)
-- [Demo Video](docs/PM/demo-video.md)
+### プロジェクト管理
+- [アプリケーション概要](docs/PM/app-overview.md)
+- [プロジェクト報告書](docs/PM/project-report.md)
+- [デモ動画](docs/PM/demo-video.md)
 
-### Business Analysis
-- [Personas](docs/BA/persona.md)
-- [Motivation Graph](docs/BA/motivation-graph.md)
-- [Storyboard](docs/BA/storyboard.md)
-- [UI Mockups](docs/BA/ui-mock.md)
+### ビジネス分析
+- [ペルソナ](docs/BA/persona.md)
+- [モチベーショングラフ](docs/BA/motivation-graph.md)
+- [ストーリーボード](docs/BA/storyboard.md)
+- [UI モック](docs/BA/ui-mock.md)
 
-### System Architecture
-- [System Architecture](docs/Architect/system-architecture.md)
-- [RPO/RTO Definitions](docs/Architect/rpo-rto.md)
-- [DR/Backup Strategy](docs/Architect/dr-backup.md)
-- [Performance Metrics](docs/Architect/performance.md)
+### システムアーキテクチャ
+- [システムアーキテクチャ](docs/Architect/system-architecture.md)
+- [RPO/RTO 定義](docs/Architect/rpo-rto.md)
+- [DR/バックアップ戦略](docs/Architect/dr-backup.md)
+- [パフォーマンス指標](docs/Architect/performance.md)
 
-### Database
-- [ER Diagram](docs/DBA/er-diagram.md)
+### データベース
+- [ER 図](docs/DBA/er-diagram.md)
 
-### Infrastructure
-- [Deployment Guide](docs/Infra/deployment.md)
-- [Storage Configuration](docs/Infra/quick-storage-setup.md)
-- [Troubleshooting](docs/Infra/storage-troubleshooting.md)
-
----
-
-## 🔒 Security Features
-
-- **Password Security**: Argon2 hashing algorithm
-- **Authentication**: JWT token-based authentication
-- **CORS Protection**: Configurable cross-origin request restrictions
-- **Rate Limiting**: Redis-based rate limiting (optional)
-- **SQL Injection Prevention**: SQLAlchemy ORM with parameterized queries
-- **Input Validation**: Pydantic schema validation
-- **Content Sanitization**: Bleach for HTML sanitization
+### インフラ
+- [デプロイメントガイド](docs/Infra/deployment.md)
+- [ストレージ設定](docs/Infra/quick-storage-setup.md)
+- [トラブルシューティング](docs/Infra/storage-troubleshooting.md)
 
 ---
 
-## 👥 Team Members (luckyfouru)
+## 🔒 セキュリティ機能
 
-- **2442043** - 杉浦芙美子 (Sugiura Fumiko)
-- **2442053** - 竹髙 結衣 (Takehaka Yui)
-- **2442097** - 林 子嫻 (Lin Zixian)
-- **2442103** - 小栗 花音 (Oguri Kano)
-
----
-
-## 🤝 Contributing
-
-This project was created for educational purposes. For questions or suggestions, please open an issue on GitHub.
+- **パスワードセキュリティ**: Argon2 ハッシュアルゴリズム
+- **認証**: JWT トークンベース認証
+- **CORS 保護**: 設定可能なクロスオリジンリクエスト制限
+- **レート制限**: Redis ベースのレート制限（オプション）
+- **SQL インジェクション対策**: パラメータ化クエリを使用した SQLAlchemy ORM
+- **入力バリデーション**: Pydantic スキーマバリデーション
+- **コンテンツサニタイゼーション**: HTML サニタイゼーション用 Bleach
 
 ---
 
-## 🔗 Links
+## 👥 メンバー（チーム名: luckyfouru）
 
-- **Live Application**: https://syokan00.github.io/Database_Final/
-- **GitHub Repository**: https://github.com/syokan00/Database_Final
-- **API Documentation**: Available at `/docs` endpoint when backend is running
+- **2442043** - 杉浦芙美子（Sugiura Fumiko）
+- **2442053** - 竹髙 結衣（Takehaka Yui）
+- **2442097** - 林 子嫻（Lin Zixian）
+- **2442103** - 小栗 花音（Oguri Kano）
 
 ---
 
-## 📄 License
+## 🤝 コントリビューション
 
-This project is created for educational purposes.
+このプロジェクトは教育目的で作成されました。質問や提案がある場合は、GitHub の Issues でお知らせください。
+
+---
+
+## 🔗 リンク
+
+- **公開アプリケーション**: https://syokan00.github.io/Database_Final/
+- **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
+- **API ドキュメント**: バックエンド実行時に `/docs` エンドポイントで利用可能
+
+---
+
+## 📄 ライセンス
+
+このプロジェクトは教育目的で作成されました。
 
 ---
 
