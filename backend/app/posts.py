@@ -136,37 +136,56 @@ def create_post(
     current_user: models.User = Depends(auth.get_current_user),
     background_tasks: BackgroundTasks = None
 ):
-    # Rate limiting check (Redis) - optional
-    if redis_available and r:
-        # Limit: 1 post per 30 seconds
-        key = f"post_limit:{current_user.id}"
-        if r.get(key):
-            raise HTTPException(status_code=429, detail="Please wait 30 seconds before posting again.")
+    import logging
+    logger = logging.getLogger("uvicorn")
     
-    # Validate restriction rules
-    if post.restriction_type:
-        is_valid, error_msg = validate_restriction(post.content, post.restriction_type)
-        if not is_valid:
-            raise HTTPException(status_code=400, detail=error_msg or "Content does not meet restriction requirements")
-    
-    # Sanitize content
-    sanitized_content = bleach.clean(post.content, tags=['b', 'i', 'u', 'em', 'strong', 'a'], attributes={'a': ['href', 'title']})
-    
-    new_post = models.Post(
-        title=post.title,
-        content=sanitized_content,
-        source_language=post.source_language,
-        category=post.category,
-        tags=",".join(post.tags) if post.tags else "",
-        restriction_type=post.restriction_type,
-        image_urls=post.image_urls,
-        attachments=post.attachments,
-        is_anonymous=post.is_anonymous if post.is_anonymous is not None else False,
-        author_id=current_user.id
-    )
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post)
+    try:
+        # Rate limiting check (Redis) - optional
+        if redis_available and r:
+            # Limit: 1 post per 30 seconds
+            key = f"post_limit:{current_user.id}"
+            try:
+                if r.get(key):
+                    raise HTTPException(status_code=429, detail="Please wait 30 seconds before posting again.")
+            except Exception as e:
+                logger.warning(f"Redis rate limit check failed: {e}. Proceeding without rate limit.")
+        
+        # Validate restriction rules
+        if post.restriction_type:
+            is_valid, error_msg = validate_restriction(post.content, post.restriction_type)
+            if not is_valid:
+                raise HTTPException(status_code=400, detail=error_msg or "Content does not meet restriction requirements")
+        
+        # Sanitize content
+        sanitized_content = bleach.clean(post.content, tags=['b', 'i', 'u', 'em', 'strong', 'a'], attributes={'a': ['href', 'title']})
+        
+        new_post = models.Post(
+            title=post.title,
+            content=sanitized_content,
+            source_language=post.source_language,
+            category=post.category,
+            tags=",".join(post.tags) if post.tags else "",
+            restriction_type=post.restriction_type,
+            image_urls=post.image_urls,
+            attachments=post.attachments,
+            is_anonymous=post.is_anonymous if post.is_anonymous is not None else False,
+            author_id=current_user.id
+        )
+        db.add(new_post)
+        db.commit()
+        db.refresh(new_post)
+    except HTTPException:
+        # Re-raise HTTP exceptions (validation errors, rate limits, etc.)
+        raise
+    except Exception as e:
+        # Rollback transaction on error
+        db.rollback()
+        error_msg = str(e)
+        logger.error(f"Failed to create post (user {current_user.id}): {error_msg}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create post: {error_msg}"
+        )
     
     try:
         # Check badges after creating post (first_post badge, night_owl, streak_poster, etc.)
