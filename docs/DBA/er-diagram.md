@@ -51,7 +51,6 @@
 
 #### 制約
 - `author_id` は `users.id` への外部キー
-- `author_id` が削除されると、関連する投稿は `SET NULL`（匿名投稿の保持）
 
 ### 3. items（出品アイテム）
 
@@ -350,7 +349,6 @@
 ### 1. users → posts（1 対 多）
 - **関係**: 1 人のユーザーは複数の投稿を作成できる
 - **外部キー**: `posts.author_id` → `users.id`
-- **削除動作**: SET NULL（匿名投稿を保持するため）
 
 ### 2. users → items（1 対 多）
 - **関係**: 1 人のユーザーは複数のアイテムを出品できる
@@ -418,9 +416,8 @@
 - `email` に UNIQUE インデックス（既に UNIQUE 制約により自動生成）
 
 ### posts テーブル
-- `author_id` にインデックス（外部キー）
-- `created_at` にインデックス（最新順表示用）
-- `category` にインデックス（カテゴリ検索用）
+- `id` に主キーインデックス（自動生成）
+- `author_id` に外部キーインデックス（自動生成）
 
 ### follows テーブル
 - `(follower_id, following_id)` に UNIQUE インデックス（重複フォロー防止）
