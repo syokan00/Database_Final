@@ -6,214 +6,90 @@
 
 [![Live Demo](https://img.shields.io/badge/Demo-公開中-brightgreen)](https://syokan00.github.io/Database_Final/)
 [![GitHub](https://img.shields.io/badge/GitHub-リポジトリ-blue)](https://github.com/syokan00/Database_Final)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-19.2.0-61DAFB)](https://react.dev/)
-
----
-
-## 📖 目次
-
-- [プロジェクト概要](#-プロジェクト概要)
-- [主要機能](#-主要機能)
-- [技術スタック](#-技術スタック)
-- [デプロイメント](#-デプロイメント)
-- [プロジェクト構成](#-プロジェクト構成)
-- [API ドキュメント](#-api-ドキュメント)
-- [トラブルシューティング](#-トラブルシューティング)
-- [ドキュメント](#-ドキュメント)
-- [ライセンス](#-ライセンス)
 
 ---
 
 ## 📖 プロジェクト概要
 
-**MemoLucky** は、大学生がキャンパスライフで必要な情報を共有し、助け合えるコミュニティを構築することを目的としたフルスタック Web アプリケーションです。先輩たちのリアルな経験談、フリマ、研究室情報、就活情報などを一元的に管理・閲覧できます。
+**MemoLucky** は、大学生がキャンパスライフで必要な情報を共有し、助け合えるコミュニティを構築するフルスタック Web アプリケーションです。
 
-### ビジョン
 **"Lucky for you — あなたに届く、誰かの経験。"**
-
-私たちは、同じ道を歩んできた人々が共有する実体験から、最も価値のある知識が生まれると信じています。MemoLucky は、大学の異なる段階にいる学生たちの間のギャップを埋める架け橋となります。
-
-### 主な特徴
-
-- 🎓 **大学生向け**：新入生から卒業生まで、すべての学生が利用可能
-- 🔐 **安全な認証**：JWT トークンベースの認証システム
-- 📱 **PWA対応**：モバイルアプリとしてインストール可能
-- 🌐 **レスポンシブデザイン**：デスクトップ、タブレット、スマートフォンに対応
-- ⚡ **高速パフォーマンス**：React + Vite による最適化されたフロントエンド
-- 🔄 **リアルタイム更新**：通知システムによるリアルタイムな情報共有
 
 ---
 
 ## ✨ 主要機能
 
 ### 📝 経験談共有（Notes）
-
-- **投稿作成・閲覧**：先輩の実体験を投稿・閲覧
-- **検索・フィルタリング**：タグ、カテゴリ、キーワードで検索
-- **ソーシャル機能**：
-  - いいね機能
-  - お気に入り機能
-  - コメント機能とディスカッション
-- **リッチメディア対応**：
-  - 画像アップロード（複数画像対応）
-  - 添付ファイル（PDF、ドキュメントなど）
-- **匿名投稿**：プライバシー保護のための匿名投稿機能
+- 投稿作成・閲覧、タグ・カテゴリ・キーワードで検索
+- いいね、お気に入り、コメント機能
+- 画像・添付ファイル対応、匿名投稿
 
 ### 🛍️ キャンパスフリマ（Items）
-
-- **出品・購入**：中古品の出品・購入（教科書、家電など）
-- **カテゴリ分類**：教科書、家電、その他
-- **高度なフィルタリング**：カテゴリ、ステータス、価格でフィルタリング
-- **出品管理**：
-  - 出品アイテムの編集
-  - 出品アイテムの削除
-  - リアルタイムなステータス更新
-- **価格設定**：任意の価格を設定可能
+- 中古品の出品・購入（教科書、家電など）
+- カテゴリ・ステータス・価格でフィルタリング
+- 出品アイテムの編集・削除
 
 ### 🧪 研究室情報（Labs）
-
-- **研究室一覧**：各研究室の情報を閲覧
-- **体験談**：研究室メンバーからの体験談やレビューを読む
-- **検索機能**：興味に合った研究室を見つける
+- 各研究室の情報と体験談を閲覧
 
 ### 💼 就活情報（Jobs）
-
-- **就活体験談**：先輩学生の就活体験談やインサイトにアクセス
-- **面接情報**：面接体験から学ぶ
-- **企業情報**：企業・職種情報の共有
+- 先輩の就活体験談・面接情報を閲覧
 
 ### 👤 ユーザー管理
-
-- **認証システム**：
-  - ユーザー登録（メールアドレス、パスワード）
-  - ログイン・ログアウト（JWT トークンベース）
-  - 安全なパスワードハッシュ（Argon2）
-- **プロフィール管理**：
-  - アバター画像のアップロード
-  - カバー画像の設定
-  - 自己紹介文の編集
-  - 学年情報の設定
-- **フォローシステム**：
-  - ユーザーのフォロー/フォロー解除
-  - フォロワー/フォロー中リストの表示
-  - プロフィールページにフォロワー数・フォロー中数を表示
+- JWT 認証、プロフィール管理（アバター、カバー画像、自己紹介）
+- フォロー・フォロワーシステム
 
 ### 🔔 通知システム
-
-- **リアルタイム通知**：
-  - いいね通知
-  - コメント通知
-  - フォロー通知
-  - メッセージ通知
-- **通知管理**：
-  - 既読/未読状態の管理（個別・一括）
-  - フィルタリング機能付き通知センター
-  - 関連コンテンツへのスマートナビゲーション
+- いいね、コメント、フォロー、メッセージのリアルタイム通知
+- 既読/未読管理、通知センター
 
 ### 💬 メッセージング・チャット
+- ユーザー間の直接メッセージ、アイテム専用チャット
 
-- **直接メッセージ**：ユーザー間の直接メッセージ
-- **アイテム専用チャット**：フリマ取引用のアイテム専用チャット
-- **リアルタイム配信**：リアルタイムメッセージ配信
+### 🏆 バッジシステム
+- 活動に応じたバッジ獲得（初投稿、夜更かしの秀才、継続の達人など）
 
-### 🏆 実績バッジシステム
-
-- **バッジ獲得**：活動と実績に基づいてバッジを獲得
-- **バッジ種類**：
-  - 🥚 初投稿（First Post）
-  - ⭐ 夜更かしの秀才（Night Owl）
-  - 🔥 継続の達人（Streak Poster）
-  - 💬 マルチリンガル（Polyglot）
-  - ❤️ ハートコレクター（Heart Collector）
-  - 👑 コメント王（Comment King）
-  - 🛍️ トップセラー（Top Seller）
-  - その他多数
-- **プロフィール表示**：プロフィールページにバッジを表示
-
-### 📱 プログレッシブ Web アプリ（PWA）
-
-- **インストール可能**：モバイルアプリとしてインストール可能
-- **オフラインサポート**：Service Worker によるオフラインサポート
-- **レスポンシブデザイン**：すべてのデバイスに対応したレスポンシブデザイン
+### 📱 PWA
+- モバイルアプリとしてインストール可能、オフラインサポート
 
 ---
 
 ## 🛠️ 技術スタック
 
 ### フロントエンド
-
-| 技術 | バージョン | 用途 |
-|------|----------|------|
-| **React** | 19.2.0 | モダンな UI ライブラリ |
-| **Vite** | 7.2.4 | 超高速ビルドツール |
-| **React Router** | 7.9.6 | クライアントサイドルーティング（HashRouter for GitHub Pages） |
-| **Axios** | 1.13.2 | HTTP クライアント |
-| **Context API** | - | 状態管理（認証、言語、投稿データ） |
-| **lucide-react** | 0.555.0 | アイコンライブラリ |
+- **React** 19.2.0 + **Vite** 7.2.4
+- **React Router** 7.9.6 (HashRouter)
+- **Axios** 1.13.2
+- **Context API** (状態管理)
 
 ### バックエンド
-
-| 技術 | バージョン | 用途 |
-|------|----------|------|
-| **FastAPI** | 0.104.1 | 高性能 Python Web フレームワーク |
-| **PostgreSQL** | - | 堅牢なリレーショナルデータベース |
-| **SQLAlchemy** | 2.0.23 | モダンな Python ORM |
-| **Pydantic** | 2.9.2 | データバリデーション |
-| **JWT** | - | 安全なトークンベース認証 |
-| **Argon2** | - | パスワードハッシュアルゴリズム |
-| **Bleach** | 6.1.0 | HTML サニタイゼーション |
-| **Uvicorn** | 0.24.0 | ASGI サーバー |
+- **FastAPI** 0.104.1 + **Uvicorn** 0.24.0
+- **PostgreSQL** + **SQLAlchemy** 2.0.23
+- **Pydantic** 2.9.2 (データバリデーション)
+- **JWT** + **Argon2** (認証・セキュリティ)
+- **Bleach** 6.1.0 (HTML サニタイゼーション)
 
 ### ストレージ・キャッシュ
+- **Supabase Storage** / **Cloudinary** / **MinIO** (オブジェクトストレージ)
+- **Redis** 5.0.1 (キャッシュ・レート制限、オプション)
 
-| 技術 | 用途 | 備考 |
-|------|------|------|
-| **Supabase Storage** | ファイル・画像用オブジェクトストレージ | HTTP API 経由（推奨） |
-| **Cloudinary** | 代替画像ストレージ | 25GB 無料プラン |
-| **MinIO** | セルフホスト型オブジェクトストレージ | 開発・テスト環境向け |
-| **Redis** | キャッシュとレート制限 | オプション（`REDIS_ENABLED=false` で無効化可能） |
-
-### インフラ・DevOps
-
-| 技術 | 用途 |
-|------|------|
-| **Docker** | コンテナ化 |
-| **Docker Compose** | マルチコンテナオーケストレーション |
-| **GitHub Pages** | フロントエンド静的ホスティング |
-| **Render** | バックエンドとデータベースホスティング |
-| **GitHub Actions** | CI/CD 自動化 |
+### インフラ
+- **GitHub Pages** (フロントエンド)
+- **Render** (バックエンド・データベース)
+- **Docker** + **Docker Compose**
+- **GitHub Actions** (CI/CD)
 
 ---
 
 ## 🌐 デプロイメント
 
 ### 本番環境
-
 - **フロントエンド**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
-- **バックエンド API**: Render.com
+- **バックエンド**: Render.com
 - **データベース**: Render PostgreSQL
 - **ストレージ**: Supabase Storage / Cloudinary
 
-### デプロイメント手順
-
-#### フロントエンド（GitHub Pages）
-
-1. GitHub Actions が自動的にデプロイします
-2. `main` ブランチへのプッシュで自動デプロイがトリガーされます
-3. 詳細は [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) を参照
-
-#### バックエンド（Render）
-
-1. Render で Web Service を作成
-2. 環境変数を設定（`DATABASE_URL`, `STORAGE_TYPE`, `SUPABASE_URL` など）
-3. Build Command: `pip install -r requirements.txt`
-4. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-
-詳細なデプロイメントガイドは [docs/Infra/](docs/Infra/) を参照してください：
-
-- [デプロイメントガイド](docs/Infra/deployment.md)
-- [ストレージ設定ガイド](docs/Infra/quick-storage-setup.md)
+詳細は [デプロイメントガイド](docs/Infra/deployment.md) を参照。
 
 ---
 
@@ -221,177 +97,59 @@
 
 ```
 Database_Final/
-├── frontend/                      # React フロントエンドアプリケーション
+├── frontend/              # React フロントエンド
 │   ├── src/
-│   │   ├── components/           # 再利用可能な UI コンポーネント
-│   │   │   ├── Navbar.jsx        # ナビゲーションバー
-│   │   │   ├── PostCard.jsx      # 投稿カード
-│   │   │   ├── ItemCard.jsx      # アイテムカード
-│   │   │   └── ...
-│   │   ├── contexts/             # React Context プロバイダー
-│   │   │   ├── AuthContext.jsx   # 認証状態管理
-│   │   │   ├── PostContext.jsx   # 投稿データ管理
-│   │   │   └── LanguageContext.jsx
-│   │   ├── pages/                # ページコンポーネント
-│   │   │   ├── HomePage.jsx      # ホームページ
-│   │   │   ├── NotesPage.jsx     # 経験談一覧
-│   │   │   ├── ItemsPage.jsx     # フリマ一覧
-│   │   │   ├── CreatePost.jsx    # 投稿作成
-│   │   │   ├── ProfilePage.jsx   # プロフィール
-│   │   │   └── ...
-│   │   ├── api/                  # API クライアントユーティリティ
-│   │   │   └── client.js         # Axios クライアント設定
-│   │   ├── utils/                # ヘルパー関数
-│   │   │   └── pwa.js            # PWA ユーティリティ
-│   │   ├── App.jsx               # アプリケーションエントリーポイント
-│   │   └── main.jsx              # React エントリーポイント
-│   ├── public/                   # 静的アセット
-│   │   ├── 404.html              # 404 ページ（GitHub Pages 用）
-│   │   ├── sw.js                 # Service Worker
-│   │   └── manifest.json         # PWA マニフェスト
-│   ├── package.json
-│   └── vite.config.js            # Vite 設定
-│
-├── backend/                       # FastAPI バックエンドアプリケーション
+│   │   ├── components/    # UI コンポーネント
+│   │   ├── contexts/      # Context API
+│   │   ├── pages/         # ページコンポーネント
+│   │   └── api/           # API クライアント
+│   └── public/            # 静的アセット
+├── backend/               # FastAPI バックエンド
 │   ├── app/
-│   │   ├── main.py               # アプリケーションエントリーポイント
-│   │   ├── models.py             # データベースモデル
-│   │   ├── schemas.py            # Pydantic スキーマ
-│   │   ├── database.py           # データベース接続設定
-│   │   ├── auth.py               # 認証エンドポイント
-│   │   ├── posts.py              # 投稿管理 API
-│   │   ├── items.py              # フリマアイテム API
-│   │   ├── comments.py           # コメント API
-│   │   ├── users.py              # ユーザー管理 API
-│   │   ├── uploads.py            # ファイルアップロード処理
-│   │   ├── storage.py            # ストレージ抽象化レイヤー
-│   │   ├── notifications.py      # 通知 API
-│   │   ├── messages.py           # メッセージング API
-│   │   ├── badges.py             # バッジ API
-│   │   ├── favorites.py          # お気に入り API
-│   │   ├── services/             # ビジネスロジック
-│   │   │   └── badge_service.py  # バッジサービス
-│   │   └── utils/                # ユーティリティ
-│   │       └── restriction_validators.py
-│   ├── requirements.txt          # Python 依存関係
-│   ├── runtime.txt               # Python バージョン指定
-│   └── Dockerfile                # Docker イメージ定義
-│
-├── docs/                          # プロジェクトドキュメント
-│   ├── BA/                       # ビジネス分析
-│   ├── Architect/                # システムアーキテクチャ
-│   ├── DBA/                      # データベース管理
-│   ├── Infra/                    # インフラ・デプロイメント
-│   └── PM/                       # プロジェクト管理
-│
-├── .github/                       # GitHub 設定
-│   └── workflows/
-│       └── deploy-pages.yml      # GitHub Actions ワークフロー
-│
-├── docker-compose.yml             # Docker Compose 設定
-├── .env.example                   # 環境変数サンプル
-└── README.md                      # このファイル
+│   │   ├── main.py        # エントリーポイント
+│   │   ├── models.py      # データベースモデル
+│   │   ├── auth.py        # 認証
+│   │   ├── posts.py       # 投稿 API
+│   │   ├── items.py       # アイテム API
+│   │   ├── uploads.py     # ファイルアップロード
+│   │   └── storage.py     # ストレージ抽象化
+│   └── requirements.txt
+├── docs/                  # プロジェクトドキュメント
+└── README.md
 ```
 
 ---
 
 ## 📡 API ドキュメント
 
-バックエンドが起動している場合、以下のエンドポイントで API ドキュメントにアクセスできます：
+バックエンド実行時：`http://localhost:8000/docs`  
+本番環境：https://memolucky-backend.onrender.com/docs
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
-
-### 主要 API エンドポイント
-
-#### 認証
-- `POST /api/auth/register` - ユーザー登録
-- `POST /api/auth/login` - ログイン
-- `GET /api/auth/me` - 現在のユーザー情報取得
-
-#### 投稿
-- `GET /api/posts/` - 投稿一覧取得
-- `POST /api/posts/` - 投稿作成
-- `GET /api/posts/{id}` - 投稿詳細取得
-- `PUT /api/posts/{id}` - 投稿更新
-- `DELETE /api/posts/{id}` - 投稿削除
-- `POST /api/posts/{id}/like` - いいね
-- `DELETE /api/posts/{id}/like` - いいね解除
-
-#### アイテム（フリマ）
-- `GET /api/items/` - アイテム一覧取得
-- `POST /api/items/` - アイテム出品
-- `GET /api/items/{id}` - アイテム詳細取得
-- `PUT /api/items/{id}` - アイテム更新
-- `DELETE /api/items/{id}` - アイテム削除
-
-#### ファイルアップロード
-- `POST /api/uploads/avatar` - アバター画像アップロード
-- `POST /api/uploads/cover` - カバー画像アップロード
-- `POST /api/uploads/post-image` - 投稿画像アップロード
-- `POST /api/uploads/file` - 一般ファイルアップロード
-
-#### 通知
-- `GET /api/notifications/` - 通知一覧取得
-- `GET /api/notifications/unread/count` - 未読通知数取得
-- `PUT /api/notifications/{id}/read` - 通知を既読に
+### 主要エンドポイント
+- **認証**: `/api/auth/register`, `/api/auth/login`, `/api/auth/me`
+- **投稿**: `/api/posts/`, `/api/posts/{id}/like`
+- **アイテム**: `/api/items/`, `/api/items/{id}`
+- **ファイル**: `/api/uploads/avatar`, `/api/uploads/post-image`
+- **通知**: `/api/notifications/`, `/api/notifications/unread/count`
 
 ---
 
 ## 🔧 トラブルシューティング
 
-### よくある問題と解決方法
+### データベース接続エラー
+- データベースは自動的に作成されます。失敗した場合は Render PostgreSQL で手動作成、または `postgres` データベースを使用
 
-#### 1. データベース接続エラー
+### ファイルアップロードエラー（503）
+- `STORAGE_TYPE` 環境変数を確認
+- Supabase Storage の場合、RLS ポリシーを設定
 
-**問題**: `database "memoluck" does not exist`
+### Redis 接続エラー
+- `REDIS_ENABLED=false` で無効化可能（オプション）
 
-**解決方法**:
-- データベースが自動的に作成されますが、作成に失敗した場合は Render PostgreSQL で手動で作成してください
-- または、`postgres` データベースを使用するように `DATABASE_URL` を変更してください
+### GitHub Pages 404 エラー
+- HashRouter を使用しているため、URL は `/#/profile` 形式（自動リダイレクト）
 
-詳細は [データベース接続トラブルシューティング](docs/Infra/database-connection-troubleshooting.md) を参照
-
-#### 2. ファイルアップロードエラー（503 Service Unavailable）
-
-**問題**: ファイルアップロード時に 503 エラーが発生
-
-**解決方法**:
-1. `STORAGE_TYPE` 環境変数が正しく設定されているか確認
-2. Supabase Storage の場合、ストレージバケットの RLS ポリシーを設定してください
-
-#### 3. Redis 接続エラー
-
-**問題**: `redis.exceptions.ConnectionError`
-
-**解決方法**:
-- Redis はオプションです。`REDIS_ENABLED=false` を環境変数に設定することで無効化できます
-
-#### 4. GitHub Pages で 404 エラー
-
-**問題**: `/profile` などのパスで 404 エラーが発生
-
-**解決方法**:
-- GitHub Pages は静的ホスティングのため、HashRouter を使用しています
-- URL は `/#/profile` の形式になります（自動的にリダイレクトされます）
-
-#### 5. Python バージョンエラー（Render）
-
-**問題**: Render で Python 3.13 を使用しているが、pydantic-core のビルドに失敗
-
-**解決方法**:
-- `backend/runtime.txt` に `python-3.11.10` を指定
-- または、Render の環境変数に `PYTHON_VERSION=3.11.10` を設定
-
-### ログの確認方法
-
-#### バックエンドログ
-```bash
-docker-compose logs backend
-```
-
-#### フロントエンドログ
-ブラウザの開発者ツール（F12）のコンソールを確認
+詳細は [データベース接続トラブルシューティング](docs/Infra/database-connection-troubleshooting.md) を参照。
 
 ---
 
@@ -423,38 +181,24 @@ docker-compose logs backend
 
 ---
 
-## 🔒 セキュリティ機能
+## 🔒 セキュリティ
 
-- **パスワードセキュリティ**: Argon2 ハッシュアルゴリズム（最新の安全なパスワードハッシュ）
-- **認証**: JWT トークンベース認証（安全なトークンベース認証）
-- **CORS 保護**: 設定可能なクロスオリジンリクエスト制限
-- **レート制限**: Redis ベースのレート制限（オプション、DDoS 対策）
-- **SQL インジェクション対策**: SQLAlchemy ORM によるパラメータ化クエリ
-- **入力バリデーション**: Pydantic スキーマによる型安全なデータバリデーション
-- **コンテンツサニタイゼーション**: Bleach による HTML サニタイゼーション（XSS 対策）
-
----
-
-## 👥 メンバー（チーム名: luckyfouru）
-
-- **2442043** - 杉浦芙美子（Sugiura Fumiko）
-- **2442053** - 竹髙 結衣（Takehaka Yui）
-- **2442097** - 林 子嫻（Lin Zixian）
-- **2442103** - 小栗 花音（Oguri Kano）
+- **Argon2** パスワードハッシュ
+- **JWT** トークンベース認証
+- **SQLAlchemy ORM** (SQL インジェクション対策)
+- **Pydantic** データバリデーション
+- **Bleach** HTML サニタイゼーション
+- **CORS** 設定
+- **Redis** レート制限（オプション）
 
 ---
 
-## 🤝 コントリビューション
+## 👥 メンバー（luckyfouru）
 
-このプロジェクトは教育目的で作成されました。質問や提案がある場合は、GitHub の Issues でお知らせください。
-
-### コントリビューション方法
-
-1. このリポジトリをフォーク
-2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. Pull Request を開く
+- **2442043** - 杉浦芙美子
+- **2442053** - 竹髙 結衣
+- **2442097** - 林 子嫻
+- **2442103** - 小栗 花音
 
 ---
 
@@ -462,7 +206,6 @@ docker-compose logs backend
 
 - **公開アプリケーション**: https://syokan00.github.io/Database_Final/
 - **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
-- **API ドキュメント**: バックエンド実行時に `http://localhost:8000/docs` で利用可能
 - **本番 API**: https://memolucky-backend.onrender.com/docs
 
 ---
@@ -470,14 +213,6 @@ docker-compose logs backend
 ## 📄 ライセンス
 
 このプロジェクトは教育目的で作成されました。
-
----
-
-## 🙏 謝辞
-
-- FastAPI コミュニティ
-- React コミュニティ
-- すべてのオープンソースコントリビューター
 
 ---
 
