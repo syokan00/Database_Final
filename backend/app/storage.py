@@ -120,6 +120,8 @@ def _init_supabase() -> Tuple[Optional[object], bool]:
             return None, False
         
         print(f"   Creating Supabase client with URL: {SUPABASE_URL[:30]}...")
+        # Use create_client - it should work with supabase==2.4.0
+        # If proxy error occurs, it's a library version issue
         client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         print("   Supabase client created successfully")
         
