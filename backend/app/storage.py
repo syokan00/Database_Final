@@ -114,23 +114,45 @@ def _init_supabase() -> Tuple[Optional[object], bool]:
         from supabase import create_client, Client
         
         if not SUPABASE_URL or not SUPABASE_KEY:
-            print("Supabase credentials not provided")
+            print("❌ Supabase credentials not provided")
+            print(f"   SUPABASE_URL: {'SET' if SUPABASE_URL else 'NOT SET'}")
+            print(f"   SUPABASE_KEY: {'SET' if SUPABASE_KEY else 'NOT SET'}")
             return None, False
         
+        print(f"   Creating Supabase client with URL: {SUPABASE_URL[:30]}...")
         client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("   Supabase client created successfully")
         
         # 测试连接 - 尝试列出 buckets
         try:
-            client.storage.list_buckets()
+            print("   Testing Supabase connection by listing buckets...")
+            buckets = client.storage.list_buckets()
+            print(f"   ✅ Supabase connection test successful. Found {len(buckets)} bucket(s)")
+            
+            # 检查目标 bucket 是否存在
+            bucket_names = [b.name for b in buckets] if buckets else []
+            if SUPABASE_BUCKET not in bucket_names:
+                print(f"   ⚠️  Warning: Bucket '{SUPABASE_BUCKET}' not found in Supabase.")
+                print(f"   Available buckets: {bucket_names}")
+                print(f"   Please create the bucket '{SUPABASE_BUCKET}' in Supabase Dashboard")
+                # 仍然返回 True，因为连接是成功的，只是 bucket 可能不存在
+                # 上传时会失败，但至少我们知道连接是好的
+            
             return client, True
         except Exception as e:
-            print(f"Supabase connection test failed: {e}")
+            print(f"   ❌ Supabase connection test failed: {e}")
+            print(f"   Error type: {type(e).__name__}")
+            import traceback
+            print(f"   Traceback: {traceback.format_exc()}")
             return None, False
     except ImportError:
-        print("Supabase library not installed. Install with: pip install supabase")
+        print("❌ Supabase library not installed. Install with: pip install supabase")
         return None, False
     except Exception as e:
-        print(f"Supabase initialization failed: {e}")
+        print(f"❌ Supabase initialization failed: {e}")
+        print(f"   Error type: {type(e).__name__}")
+        import traceback
+        print(f"   Traceback: {traceback.format_exc()}")
         return None, False
 
 
