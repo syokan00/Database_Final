@@ -38,27 +38,39 @@ def init_storage():
     """初始化存储后端"""
     global storage_client, storage_available, storage_type_used
     
+    print(f"=== Storage Initialization ===")
+    print(f"STORAGE_TYPE environment variable: '{STORAGE_TYPE}'")
+    
     if STORAGE_TYPE == "minio":
+        print("Attempting to initialize MinIO storage...")
         storage_client, storage_available = _init_minio()
         if storage_available:
             storage_type_used = "minio"
     elif STORAGE_TYPE == "supabase":
+        print("Attempting to initialize Supabase storage...")
+        print(f"SUPABASE_URL: {'SET' if SUPABASE_URL else 'NOT SET'}")
+        print(f"SUPABASE_KEY: {'SET (length: ' + str(len(SUPABASE_KEY)) + ')' if SUPABASE_KEY else 'NOT SET'}")
+        print(f"SUPABASE_BUCKET: '{SUPABASE_BUCKET}'")
         storage_client, storage_available = _init_supabase()
         if storage_available:
             storage_type_used = "supabase"
     elif STORAGE_TYPE == "cloudinary":
+        print("Attempting to initialize Cloudinary storage...")
         storage_client, storage_available = _init_cloudinary()
         if storage_available:
             storage_type_used = "cloudinary"
     else:
-        print("No storage backend configured. Upload functionality will be disabled.")
-        print("To enable uploads, set STORAGE_TYPE to one of: minio, supabase, cloudinary")
+        print(f"⚠️  No storage backend configured. STORAGE_TYPE='{STORAGE_TYPE}' (expected: minio, supabase, or cloudinary)")
+        print("Upload functionality will be disabled.")
+        print("To enable uploads, set STORAGE_TYPE environment variable to one of: minio, supabase, cloudinary")
         storage_available = False
     
+    print(f"=== Storage Initialization Result ===")
     if storage_available:
-        print(f"Storage backend '{storage_type_used}' initialized successfully")
+        print(f"✅ Storage backend '{storage_type_used}' initialized successfully")
     else:
-        print("Storage backend initialization failed. Upload functionality will be disabled.")
+        print("❌ Storage backend initialization failed. Upload functionality will be disabled.")
+    print(f"storage_available = {storage_available}")
 
 
 def _init_minio() -> Tuple[Optional[object], bool]:
