@@ -253,27 +253,50 @@ async def _upload_to_minio(file_content: bytes, object_name: str, content_type: 
 
 
 async def _upload_to_supabase(file_content: bytes, object_name: str, content_type: str) -> str:
-    """上传到 Supabase Storage"""
+    """上传到 Supabase Storage - 使用 HTTP 请求直接调用 API"""
     try:
-        print(f"Uploading to Supabase: bucket={SUPABASE_BUCKET}, path={object_name}")
+        print(f"Uploading to Supabase via HTTP API: bucket={storage_client['bucket']}, path={object_name}")
         
-        # Supabase Storage 上传
-        # upload 方法的参数：path, file, file_options
-        response = storage_client.storage.from_(SUPABASE_BUCKET).upload(
-            object_name,
-            file_content,
-            file_options={"content-type": content_type, "upsert": "true"}
-        )
+        # 使用 HTTP 请求直接上传到 Supabase Storage API
+        # API endpoint: POST /storage/v1/object/{bucket}/{path}
+        upload_url = f"{storage_client['url']}/storage/v1/object/{storage_client['bucket']}/{object_name}"
         
-        print(f"Supabase upload response: {response}")
+        headers = {
+            "apikey": storage_client['key'],
+            "Authorization": f"Bearer {storage_client['key']}",
+            "Content-Type": content_type,
+            "x-upsert": "true"  # 允许覆盖已存在的文件
+        }
         
-        # 获取公开 URL
-        public_url = storage_client.storage.from_(SUPABASE_BUCKET).get_public_url(object_name)
-        print(f"Supabase public URL: {public_url}")
-        return public_url
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                upload_url,
+                content=file_content,
+                headers=headers
+            )
+            
+            if response.status_code in [200, 201]:
+                # 构建公开访问 URL
+                # 格式: {SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}
+                public_url = f"{storage_client['url']}/storage/v1/object/public/{storage_client['bucket']}/{object_name}"
+                print(f"✅ Supabase upload successful. Public URL: {public_url}")
+                return public_url
+            else:
+                error_msg = f"Supabase upload failed with status {response.status_code}: {response.text}"
+                print(f"❌ {error_msg}")
+                raise Exception(error_msg)
+                
+    except httpx.HTTPError as e:
+        error_msg = f"Supabase HTTP request failed: {str(e)}"
+        print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
+        raise Exception(error_msg)
     except Exception as e:
         error_msg = f"Supabase upload failed: {str(e)}"
-        print(error_msg)
+        print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
         raise Exception(error_msg)
 
 
