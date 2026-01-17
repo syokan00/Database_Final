@@ -23,8 +23,9 @@ python-magic==0.4.27
 # Storage & Cache
 redis==5.0.1
 minio==7.2.0
-supabase==2.4.0
-cloudinary==1.39.0
+supabase==2.8.1
+gotrue==2.8.1
+cloudinary==1.44.1
 
 # Async tasks
 celery==5.3.6
