@@ -212,10 +212,8 @@
 
 詳細なデプロイメントガイドは [docs/Infra/](docs/Infra/) を参照してください：
 
-- [完全なデプロイメントガイド](docs/Infra/deployment.md)
+- [デプロイメントガイド](docs/Infra/deployment.md)
 - [ストレージ設定ガイド](docs/Infra/quick-storage-setup.md)
-- [Supabase Storage 権限設定](docs/Infra/supabase-storage-permissions-fix.md)
-- [トラブルシューティングガイド](docs/Infra/storage-troubleshooting.md)
 
 ---
 
@@ -361,9 +359,6 @@ Database_Final/
 **解決方法**:
 1. `STORAGE_TYPE` 環境変数が正しく設定されているか確認
 2. Supabase Storage の場合、ストレージバケットの RLS ポリシーを設定してください
-   - 詳細は [Supabase Storage 権限設定ガイド](docs/Infra/supabase-storage-permissions-fix.md) を参照
-
-詳細は [ストレージトラブルシューティング](docs/Infra/storage-troubleshooting.md) を参照
 
 #### 3. Redis 接続エラー
 
@@ -371,7 +366,6 @@ Database_Final/
 
 **解決方法**:
 - Redis はオプションです。`REDIS_ENABLED=false` を環境変数に設定することで無効化できます
-- 詳細は [Redis オプション設定](docs/Infra/redis-optional-fix.md) を参照
 
 #### 4. GitHub Pages で 404 エラー
 
@@ -380,7 +374,6 @@ Database_Final/
 **解決方法**:
 - GitHub Pages は静的ホスティングのため、HashRouter を使用しています
 - URL は `/#/profile` の形式になります（自動的にリダイレクトされます）
-- 詳細は [GitHub Pages ルーティング解決方法](docs/Infra/github-pages-routing-final-solution.md) を参照
 
 #### 5. Python バージョンエラー（Render）
 
@@ -389,7 +382,6 @@ Database_Final/
 **解決方法**:
 - `backend/runtime.txt` に `python-3.11.10` を指定
 - または、Render の環境変数に `PYTHON_VERSION=3.11.10` を設定
-- 詳細は [Render Python バージョン修正](docs/Infra/render-python-version-fix.md) を参照
 
 ### ログの確認方法
 
@@ -428,8 +420,6 @@ docker-compose logs backend
 ### インフラ
 - [デプロイメントガイド](docs/Infra/deployment.md)
 - [ストレージ設定](docs/Infra/quick-storage-setup.md)
-- [Supabase Storage 権限設定](docs/Infra/supabase-storage-permissions-fix.md)
-- [トラブルシューティング](docs/Infra/storage-troubleshooting.md)
 
 ---
 
