@@ -67,7 +67,7 @@
 - `tags` (TEXT): タグ（カンマ区切り）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
 - `contact_method` (TEXT): 連絡方法
-- `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名出品フラグ（通常は FALSE）
+- `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名出品フラグ（現在は未使用。商品取引は匿名不可のため、常に FALSE）
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
 #### 制約
@@ -430,4 +430,4 @@
 - 投稿者本人のみが自分の匿名投稿を削除できる
 
 ### items.is_anonymous
-- 通常は `FALSE`（商品取引は匿名不可）
+- **現在は未使用**。商品取引は匿名不可のため、フロントエンドで常に `FALSE` に設定されます。データベースにはフィールドが存在しますが、機能は実装されていません。
