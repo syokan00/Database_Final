@@ -9,7 +9,7 @@
 
 ---
 
-## 📖 プロジェクト概要
+## プロジェクト概要
 
 **MemoLucky** は、大学生がキャンパスライフで必要な情報を共有し、助け合えるコミュニティを構築するフルスタック Web アプリケーションです。
 
@@ -17,44 +17,44 @@
 
 ---
 
-## ✨ 主要機能
+## 主要機能
 
-### 📝 経験談共有（Notes）
+### 経験談共有（Notes）
 - 投稿作成・閲覧、タグ・カテゴリ・キーワードで検索
 - いいね、お気に入り、コメント機能
 - 画像・添付ファイル対応、匿名投稿
 
-### 🛍️ キャンパスフリマ（Items）
+### キャンパスフリマ（Items）
 - 中古品の出品・購入（教科書、家電など）
 - カテゴリ・ステータス・価格でフィルタリング
 - 出品アイテムの編集・削除
 
-### 🧪 研究室情報（Labs）
+### 研究室情報（Labs）
 - 各研究室の情報と体験談を閲覧
 
-### 💼 就活情報（Jobs）
+### 就活情報（Jobs）
 - 先輩の就活体験談・面接情報を閲覧
 
-### 👤 ユーザー管理
+### ユーザー管理
 - JWT 認証、プロフィール管理（アバター、カバー画像、自己紹介）
 - フォロー・フォロワーシステム
 
-### 🔔 通知システム
+### 通知システム
 - いいね、コメント、フォロー、メッセージのリアルタイム通知
 - 既読/未読管理、通知センター
 
-### 💬 メッセージング・チャット
-- ユーザー間の直接メッセージ、アイテム専用チャット
+### メッセージング・チャット
+- アイテム専用チャット
 
-### 🏆 バッジシステム
+### バッジシステム
 - 活動に応じたバッジ獲得（初投稿、夜更かしの秀才、継続の達人など）
 
-### 📱 PWA
+### PWA
 - モバイルアプリとしてインストール可能、オフラインサポート
 
 ---
 
-## 🛠️ 技術スタック
+## 技術スタック
 
 ### フロントエンド
 - **React** 19.2.0 + **Vite** 7.2.4
@@ -81,7 +81,7 @@
 
 ---
 
-## 🌐 デプロイメント
+## デプロイメント
 
 ### 本番環境
 - **フロントエンド**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
@@ -118,38 +118,7 @@ Database_Final/
 
 ---
 
-## 📡 API ドキュメント
-
-- **本番環境**: https://memolucky-backend.onrender.com/docs
-- **ローカル環境**: `http://localhost:8000/docs`
-
-### 主要エンドポイント
-- **認証**: `/api/auth/register`, `/api/auth/login`, `/api/auth/me`
-- **投稿**: `/api/posts/`, `/api/posts/{id}/like`
-- **アイテム**: `/api/items/`, `/api/items/{id}`
-- **ファイル**: `/api/uploads/avatar`, `/api/uploads/post-image`
-- **通知**: `/api/notifications/`, `/api/notifications/unread/count`
-
----
-
-## 🔧 トラブルシューティング
-
-### データベース接続エラー
-- データベースは自動的に作成されます。失敗した場合は Render PostgreSQL で手動作成、または `postgres` データベースを使用
-
-### ファイルアップロードエラー（503）
-- `STORAGE_TYPE` 環境変数を確認
-- Supabase Storage の場合、RLS ポリシーを設定
-
-### Redis 接続エラー
-- `REDIS_ENABLED=false` で無効化可能（オプション）
-
-### GitHub Pages 404 エラー
-- HashRouter を使用しているため、URL は `/#/profile` 形式（自動リダイレクト）
-
----
-
-## 📚 ドキュメント
+## ドキュメント
 
 ### プロジェクト管理
 - [アプリケーション概要](docs/PM/app-overview.md)
@@ -176,7 +145,7 @@ Database_Final/
 
 ---
 
-## 🔒 セキュリティ
+## セキュリティ
 
 - **Argon2** パスワードハッシュ
 - **JWT** トークンベース認証
@@ -188,7 +157,7 @@ Database_Final/
 
 ---
 
-## 👥 メンバー（luckyfouru）
+## メンバー（luckyfouru）
 
 - **2442043** - 杉浦芙美子
 - **2442053** - 竹髙 結衣
@@ -197,18 +166,18 @@ Database_Final/
 
 ---
 
-## 🔗 リンク
+## リンク
 
-### 🌐 公開 URL
-- **📱 アプリケーション**: https://syokan00.github.io/Database_Final/
-- **📚 API ドキュメント**: https://memolucky-backend.onrender.com/docs
+### 公開 URL
+- **アプリケーション**: https://syokan00.github.io/Database_Final/
+- **API ドキュメント**: https://memolucky-backend.onrender.com/docs
 
-### 💻 開発・リソース
+### 開発・リソース
 - **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
 
 ---
 
-## 📄 ライセンス
+## ライセンス
 
 このプロジェクトは教育目的で作成されました。
 
