@@ -11,18 +11,18 @@
 ユーザー情報を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): ユーザー ID（自動採番）
-- `email` (VARCHAR(255), UNIQUE, NOT NULL): メールアドレス（一意制約）
-- `password_hash` (TEXT, NOT NULL): ハッシュ化されたパスワード（Argon2）
-- `nickname` (VARCHAR(64)): ニックネーム
-- `major` (VARCHAR(128)): 専攻
+- `id` (INTEGER, PRIMARY KEY): ユーザー ID（自動採番）
+- `email` (VARCHAR, UNIQUE, NOT NULL): メールアドレス（一意制約）
+- `password_hash` (VARCHAR, NOT NULL): ハッシュ化されたパスワード（Argon2）
+- `nickname` (VARCHAR): ニックネーム
+- `major` (VARCHAR): 専攻
 - `year` (INTEGER): 入学年
-- `grade` (VARCHAR(64)): 学年（大一、大二、大三、大四、M1、M2、D1 など）
-- `language_preference` (VARCHAR(8), DEFAULT 'ja'): 言語設定
-- `avatar_url` (TEXT): アバター画像の URL
-- `cover_image_url` (TEXT): 背景画像の URL
+- `grade` (VARCHAR): 学年（大一、大二、大三、大四、M1、M2、D1 など）
+- `language_preference` (VARCHAR, DEFAULT 'ja'): 言語設定
+- `avatar_url` (VARCHAR): アバター画像の URL
+- `cover_image_url` (VARCHAR): 背景画像の URL
 - `bio` (TEXT): 自己紹介
-- `role` (VARCHAR(20), DEFAULT 'user'): ロール（user/admin）
+- `role` (VARCHAR, DEFAULT 'user'): ロール（user/admin）
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): アカウント作成日時
 
 #### 制約
@@ -34,17 +34,17 @@
 ユーザーが作成する経験談投稿を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): 投稿 ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): 投稿 ID（自動採番）
 - `author_id` (INTEGER, FOREIGN KEY → users.id): 投稿者のユーザー ID
 - `title` (TEXT, NOT NULL): 投稿タイトル
 - `content` (TEXT, NOT NULL): 投稿内容（本文）
-- `source_language` (VARCHAR(8), NOT NULL): 投稿言語（'ja'/'zh'/'en'）
-- `category` (VARCHAR(50), DEFAULT 'other'): カテゴリ（lab/job/class/other）
+- `source_language` (VARCHAR, NOT NULL): 投稿言語（'ja'/'zh'/'en'）
+- `category` (VARCHAR, DEFAULT 'other'): カテゴリ（lab/job/class/other）
 - `tags` (TEXT): タグ（カンマ区切り）
-- `restriction_type` (VARCHAR(50)): 制限タイプ（例: 'no-kanji', 'emoji-only'）
+- `restriction_type` (VARCHAR): 制限タイプ（例: 'no-kanji', 'emoji-only'）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
-- `attachments` (JSONB): 添付ファイル（JSON 配列形式）
-- `translated_cache` (JSONB): 翻訳キャッシュ（{"ja":"..","zh":"..","en":".."}）
+- `attachments` (JSON): 添付ファイル（JSON 配列形式）
+- `translated_cache` (JSON): 翻訳キャッシュ（{"ja":"..","zh":"..","en":".."}）
 - `is_translated` (BOOLEAN, DEFAULT FALSE): 翻訳済みフラグ
 - `is_anonymous` (BOOLEAN, DEFAULT FALSE): 匿名投稿フラグ
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
@@ -53,23 +53,18 @@
 - `author_id` は `users.id` への外部キー
 - `author_id` が削除されると、関連する投稿は `SET NULL`（匿名投稿の保持）
 
-#### インデックス
-- `idx_posts_created` (created_at DESC): 作成日時の降順インデックス
-- `idx_posts_category` (category): カテゴリ検索用インデックス
-- `idx_posts_tags` (tags): 全文検索用 GIN インデックス
-
 ### 3. items（出品アイテム）
 
 ユーザーが出品する中古品を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): アイテム ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): アイテム ID（自動採番）
 - `user_id` (INTEGER, FOREIGN KEY → users.id): 出品者のユーザー ID
 - `title` (TEXT, NOT NULL): アイテム名
 - `description` (TEXT): アイテム説明
 - `price` (NUMERIC(10,2)): 価格
-- `status` (VARCHAR(20), DEFAULT 'selling'): ステータス（selling/sold）
-- `category` (VARCHAR(50), DEFAULT 'other'): カテゴリ
+- `status` (VARCHAR, DEFAULT 'selling'): ステータス（selling/sold）
+- `category` (VARCHAR, DEFAULT 'other'): カテゴリ
 - `tags` (TEXT): タグ（カンマ区切り）
 - `image_urls` (TEXT): 画像 URL（カンマ区切り）
 - `contact_method` (TEXT): 連絡方法
@@ -78,46 +73,44 @@
 
 #### 制約
 - `user_id` は `users.id` への外部キー
-- `user_id` が削除されると、関連するアイテムは `SET NULL`
 
 ### 4. comments（コメント）
 
 投稿へのコメントを管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): コメント ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): コメント ID（自動採番）
 - `post_id` (INTEGER, FOREIGN KEY → posts.id): 投稿 ID
 - `author_id` (INTEGER, FOREIGN KEY → users.id): コメント作成者のユーザー ID
 - `content` (TEXT, NOT NULL): コメント内容
-- `parent_id` (INTEGER, FOREIGN KEY → comments.id): 親コメント ID（返信の場合）
+- `parent_id` (INTEGER, FOREIGN KEY → comments.id): 親コメント ID（返信の場合、NULL 可）
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
 #### 制約
-- `post_id` は `posts.id` への外部キー（CASCADE 削除）
-- `author_id` は `users.id` への外部キー（SET NULL 削除）
-- `parent_id` は `comments.id` への外部キー（自己参照、CASCADE 削除）
+- `post_id` は `posts.id` への外部キー
+- `author_id` は `users.id` への外部キー
+- `parent_id` は `comments.id` への外部キー（自己参照）
 
 ### 5. likes（いいね）
 
 投稿への「いいね」を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): いいね ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): いいね ID（自動採番）
 - `post_id` (INTEGER, FOREIGN KEY → posts.id): 投稿 ID
 - `user_id` (INTEGER, FOREIGN KEY → users.id): いいねを付けたユーザー ID
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): いいね日時
 
 #### 制約
-- `post_id` は `posts.id` への外部キー（CASCADE 削除）
-- `user_id` は `users.id` への外部キー（CASCADE 削除）
-- `(post_id, user_id)` に UNIQUE 制約（同じユーザーが同じ投稿に複数回いいねできない）
+- `post_id` は `posts.id` への外部キー
+- `user_id` は `users.id` への外部キー
 
-### 6. favorites（お気に入り・收藏）
+### 6. favorites（お気に入り）
 
 投稿をお気に入りに追加した情報を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): お気に入り ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): お気に入り ID（自動採番）
 - `post_id` (INTEGER, FOREIGN KEY → posts.id): 投稿 ID
 - `user_id` (INTEGER, FOREIGN KEY → users.id): お気に入りに追加したユーザー ID
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 追加日時
@@ -125,14 +118,13 @@
 #### 制約
 - `post_id` は `posts.id` への外部キー（CASCADE 削除）
 - `user_id` は `users.id` への外部キー（CASCADE 削除）
-- `(post_id, user_id)` に UNIQUE 制約
 
 ### 7. follows（フォロー）
 
 ユーザー間のフォロー関係を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): フォロー ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): フォロー ID（自動採番）
 - `follower_id` (INTEGER, FOREIGN KEY → users.id, NOT NULL): フォローするユーザー ID
 - `following_id` (INTEGER, FOREIGN KEY → users.id, NOT NULL): フォローされるユーザー ID
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): フォロー開始日時
@@ -141,17 +133,16 @@
 - `follower_id` は `users.id` への外部キー（CASCADE 削除）
 - `following_id` は `users.id` への外部キー（CASCADE 削除）
 - `(follower_id, following_id)` に UNIQUE 制約（重複フォロー防止）
-- `follower_id` と `following_id` は異なる必要がある（自己フォロー禁止）
 
 ### 8. notifications（通知）
 
 ユーザーへの通知を管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): 通知 ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): 通知 ID（自動採番）
 - `user_id` (INTEGER, FOREIGN KEY → users.id, NOT NULL): 通知を受け取るユーザー ID
 - `type` (VARCHAR, NOT NULL): 通知タイプ（'like', 'favorite', 'follow', 'comment', 'message'）
-- `actor_id` (INTEGER, FOREIGN KEY → users.id): 通知を発生させたユーザー ID
+- `actor_id` (INTEGER, FOREIGN KEY → users.id): 通知を発生させたユーザー ID（NULL 可）
 - `target_type` (VARCHAR): ターゲットタイプ（'post', 'user', 'item'）
 - `target_id` (INTEGER): ターゲット ID（post_id, user_id, item_id）
 - `read` (BOOLEAN, DEFAULT FALSE): 既読フラグ
@@ -166,10 +157,10 @@
 システムで使用可能なバッジのマスターテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): バッジ ID（自動採番）
-- `name` (VARCHAR(100), UNIQUE, NOT NULL): バッジ名（一意）
+- `id` (INTEGER, PRIMARY KEY): バッジ ID（自動採番）
+- `name` (VARCHAR, UNIQUE, NOT NULL): バッジ名（一意）
 - `description` (TEXT): バッジ説明
-- `icon` (TEXT): バッジアイコン（絵文字など）
+- `icon` (VARCHAR): バッジアイコン（絵文字など）
 
 #### バッジ一覧
 - `first_post`: 初投稿
@@ -198,30 +189,29 @@
 
 #### 制約
 - `(user_id, badge_id)` が複合主キー
-- `user_id` は `users.id` への外部キー（CASCADE 削除）
-- `badge_id` は `badges.id` への外部キー（CASCADE 削除）
+- `user_id` は `users.id` への外部キー
+- `badge_id` は `badges.id` への外部キー
 
 ### 11. translations（翻訳）
 
-投稿の翻訳を管理するテーブルです（将来の拡張用）。
+投稿の翻訳を管理するテーブルです（現在は未使用）。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): 翻訳 ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): 翻訳 ID（自動採番）
 - `post_id` (INTEGER, FOREIGN KEY → posts.id): 投稿 ID
-- `lang` (VARCHAR(8), NOT NULL): 翻訳言語
+- `lang` (VARCHAR, NOT NULL): 翻訳言語
 - `translated_text` (TEXT, NOT NULL): 翻訳テキスト
 - `created_at` (TIMESTAMPTZ, DEFAULT NOW()): 作成日時
 
 #### 制約
-- `post_id` は `posts.id` への外部キー（CASCADE 削除）
-- `(post_id, lang)` に UNIQUE 制約（同じ投稿の同じ言語の翻訳は1つだけ）
+- `post_id` は `posts.id` への外部キー
 
 ### 12. item_messages（商品メッセージ）
 
 商品に関する売り手と買い手のメッセージを管理するテーブルです。
 
 #### カラム定義
-- `id` (SERIAL, PRIMARY KEY): メッセージ ID（自動採番）
+- `id` (INTEGER, PRIMARY KEY): メッセージ ID（自動採番）
 - `item_id` (INTEGER, FOREIGN KEY → items.id, NOT NULL): アイテム ID
 - `sender_id` (INTEGER, FOREIGN KEY → users.id, NOT NULL): 送信者 ID
 - `receiver_id` (INTEGER, FOREIGN KEY → users.id, NOT NULL): 受信者 ID
@@ -233,59 +223,60 @@
 - `sender_id` は `users.id` への外部キー（CASCADE 削除）
 - `receiver_id` は `users.id` への外部キー（CASCADE 削除）
 
+---
+
 ## ER 図（テキスト表現）
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          users                                   │
-├─────────────────────────────────────────────────────────────────┤
-│ id (PK)                                                          │
-│ email (UK)                                                       │
-│ password_hash                                                    │
-│ nickname                                                         │
-│ major                                                            │
-│ year                                                             │
-│ grade                                                            │
-│ language_preference                                              │
-│ avatar_url                                                       │
-│ cover_image_url                                                  │
-│ bio                                                              │
-│ role                                                             │
-│ created_at                                                       │
-└─┬──────────┬──────────┬──────────┬──────────┬──────────┬───────┘
-  │          │          │          │          │          │
-  │ 1        │ 1        │ 1        │ 1        │ 1        │ 1
-  │          │          │          │          │          │
-  │ N        │ N        │ N        │ N        │ N        │ N
-  │          │          │          │          │          │
-┌─▼───┐  ┌──▼─────┐ ┌──▼─────┐ ┌──▼─────┐ ┌──▼─────┐ ┌─▼──────────┐
-│posts│  │comments│ │ likes  │ │favortes│ │follows │ │item_messages│
-├─────┤  ├────────┤ ├────────┤ ├────────┤ ├────────┤ ├────────────┤
-│id(PK)│  │id(PK)  │ │id(PK)  │ │id(PK)  │ │id(PK)  │ │id(PK)      │
-│author_id││post_id │ │post_id │ │post_id │ │follower_id│item_id    │
-│title    ││author_id││user_id │ │user_id │ │following_id│sender_id  │
-│content  ││content  ││created_at│created_at│created_at│receiver_id │
-│...      ││parent_id│└────────┘ └────────┘ └────────┘ │content    │
-│         ││created_at│                                    │created_at │
-└─────────┘└────────┘                                    └───────────┘
-     │
-     │ 1
-     │
-     │ N
-     │
-┌────▼─────┐
-│translations│
-├───────────┤
-│id(PK)     │
-│post_id(FK)│
-│lang       │
-│translated_text│
-│created_at │
-└───────────┘
+┌─────────────────────────────────────────────────────────┐
+│                        users                             │
+├─────────────────────────────────────────────────────────┤
+│ id (PK)                                                  │
+│ email (UK)                                               │
+│ password_hash                                            │
+│ nickname                                                 │
+│ major                                                    │
+│ year                                                     │
+│ grade                                                    │
+│ language_preference                                      │
+│ avatar_url                                               │
+│ cover_image_url                                          │
+│ bio                                                      │
+│ role                                                     │
+│ created_at                                               │
+└─┬──────────┬──────────┬──────────┬──────────┬───────────┘
+  │          │          │          │          │
+  │ 1        │ 1        │ 1        │ 1        │ 1
+  │          │          │          │          │
+  │ N        │ N        │ N        │ N        │ N
+  │          │          │          │          │
+┌─▼───┐  ┌──▼─────┐ ┌──▼─────┐ ┌──▼─────┐ ┌─▼──────────┐
+│posts│  │comments│ │ likes  │ │follows │ │item_messages│
+├─────┤  ├────────┤ ├────────┤ ├────────┤ ├────────────┤
+│id(PK)│  │id(PK)  │ │id(PK)  │ │id(PK)  │ │id(PK)      │
+│author_id││post_id │ │post_id │ │follower_id│item_id    │
+│title  ││author_id││user_id │ │following_id│sender_id  │
+│content││content  ││created_at│created_at│receiver_id │
+│...    ││parent_id│└────────┘ └────────┘ │content     │
+│       ││created_at│                     │created_at  │
+└───────┘└────────┘                     └────────────┘
+  │
+  │ 1
+  │
+  │ N
+  │
+┌─▼──────────┐
+│favorites   │
+├────────────┤
+│id(PK)      │
+│post_id(FK) │
+│user_id(FK) │
+│created_at  │
+└────────────┘
 
-┌─────────────────────────────────────────────────────────────────┐
-│                          users                                   │
-└─┬───────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                        users                             │
+└─┬───────────────────────────────────────────────────────┘
   │
   │ 1
   │
@@ -312,9 +303,9 @@
                    │icon      │
                    └──────────┘
 
-┌─────────────────────────────────────────────────────────────────┐
-│                          users                                   │
-└─┬───────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                        users                             │
+└─┬───────────────────────────────────────────────────────┘
   │
   │ 1 (user_id)
   │
@@ -332,7 +323,27 @@
 │read         │
 │created_at   │
 └─────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│                        posts                             │
+└─┬───────────────────────────────────────────────────────┘
+  │
+  │ 1
+  │
+  │ N
+  │
+┌─▼───────────┐
+│translations │
+├─────────────┤
+│id(PK)       │
+│post_id(FK)  │
+│lang         │
+│translated_text│
+│created_at   │
+└─────────────┘
 ```
+
+---
 
 ## リレーションシップ（関係）
 
@@ -344,17 +355,14 @@
 ### 2. users → items（1 対 多）
 - **関係**: 1 人のユーザーは複数のアイテムを出品できる
 - **外部キー**: `items.user_id` → `users.id`
-- **削除動作**: SET NULL
 
 ### 3. users → comments（1 対 多）
 - **関係**: 1 人のユーザーは複数のコメントを作成できる
 - **外部キー**: `comments.author_id` → `users.id`
-- **削除動作**: SET NULL
 
 ### 4. users → likes（1 対 多）
 - **関係**: 1 人のユーザーは複数のいいねを付けることができる
 - **外部キー**: `likes.user_id` → `users.id`
-- **削除動作**: CASCADE
 
 ### 5. users → favorites（1 対 多）
 - **関係**: 1 人のユーザーは複数の投稿をお気に入りに追加できる
@@ -375,17 +383,14 @@
 - **関係**: ユーザーは複数のバッジを獲得でき、バッジは複数のユーザーに付与される
 - **関連テーブル**: `user_badges`
 - **外部キー**: `user_badges.user_id` → `users.id`, `user_badges.badge_id` → `badges.id`
-- **削除動作**: CASCADE
 
 ### 9. posts → comments（1 対 多）
 - **関係**: 1 つの投稿には複数のコメントを付けることができる
 - **外部キー**: `comments.post_id` → `posts.id`
-- **削除動作**: CASCADE
 
 ### 10. posts → likes（1 対 多）
 - **関係**: 1 つの投稿には複数のいいねを付けることができる
 - **外部キー**: `likes.post_id` → `posts.id`
-- **削除動作**: CASCADE
 
 ### 11. posts → favorites（1 対 多）
 - **関係**: 1 つの投稿は複数のユーザーにお気に入りに追加される
@@ -393,9 +398,8 @@
 - **削除動作**: CASCADE
 
 ### 12. posts → translations（1 対 多）
-- **関係**: 1 つの投稿は複数の言語に翻訳される
+- **関係**: 1 つの投稿は複数の言語に翻訳される（現在は未使用）
 - **外部キー**: `translations.post_id` → `posts.id`
-- **削除動作**: CASCADE
 
 ### 13. items → item_messages（1 対 多）
 - **関係**: 1 つのアイテムには複数のメッセージが送られる
@@ -405,41 +409,36 @@
 ### 14. comments → comments（自己参照、階層構造）
 - **関係**: コメントは返信を持つことができる（親子関係）
 - **外部キー**: `comments.parent_id` → `comments.id`
-- **削除動作**: CASCADE
+
+---
 
 ## インデックス
-
-### posts テーブル
-- `idx_posts_created` (created_at DESC): 作成日時の降順インデックス（最新順表示用）
-- `idx_posts_category` (category): カテゴリ検索用インデックス
-- `idx_posts_tags` (tags): 全文検索用 GIN インデックス
 
 ### users テーブル
 - `email` に UNIQUE インデックス（既に UNIQUE 制約により自動生成）
 
-### likes テーブル
-- `(post_id, user_id)` に UNIQUE インデックス（重複いいね防止）
-
-### favorites テーブル
-- `(post_id, user_id)` に UNIQUE インデックス（重複お気に入り防止）
+### posts テーブル
+- `author_id` にインデックス（外部キー）
+- `created_at` にインデックス（最新順表示用）
+- `category` にインデックス（カテゴリ検索用）
 
 ### follows テーブル
 - `(follower_id, following_id)` に UNIQUE インデックス（重複フォロー防止）
 
-### translations テーブル
-- `(post_id, lang)` に UNIQUE インデックス（同一投稿の同一言語翻訳は1つだけ）
+---
 
 ## データ整合性
 
 ### 制約
 - **主キー制約**: 各テーブルの `id` は一意で非 NULL
 - **外部キー制約**: 参照整合性を保証
-- **一意制約**: `email`、いいね、お気に入り、フォローなどの重複防止
-- **チェック制約**: データの有効性を保証
+- **一意制約**: `email`、フォローなどの重複防止
 
 ### トランザクション
 - 複数のテーブルにまたがる操作（例: 投稿作成、バッジ付与）はトランザクション内で実行
 - ACID 特性（原子性、一貫性、独立性、永続性）を保証
+
+---
 
 ## 匿名投稿の処理
 
@@ -450,17 +449,3 @@
 
 ### items.is_anonymous
 - 通常は `FALSE`（商品取引は匿名不可）
-
-## 将来の拡張案
-
-### 追加可能な機能
-- **カテゴリテーブル**: カテゴリを正規化
-- **タグテーブル**: タグを正規化し、多対多の関係を実現
-- **レビューシステム**: 商品へのレビュー機能
-- **検索履歴**: ユーザーの検索履歴保存
-- **おすすめ機能**: コンテンツベース/協調フィルタリング
-
-### パフォーマンス最適化
-- マテリアライズドビューの使用
-- パーティショニング（大規模データの場合）
-- 読み取り専用レプリカの利用
