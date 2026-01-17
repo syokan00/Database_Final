@@ -70,7 +70,7 @@
 - **Bleach** 6.1.0 (HTML サニタイゼーション)
 
 ### ストレージ・キャッシュ
-- **Supabase Storage** / **Cloudinary** / **MinIO** (オブジェクトストレージ)
+- **Supabase Storage** / **MinIO** (オブジェクトストレージ)
 - **Redis** 5.0.1 (キャッシュ・レート制限、オプション)
 
 ### インフラ
@@ -87,9 +87,7 @@
 - **フロントエンド**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
 - **バックエンド**: Render.com
 - **データベース**: Render PostgreSQL
-- **ストレージ**: Supabase Storage / Cloudinary
-
-詳細は [デプロイメントガイド](docs/Infra/deployment.md) を参照。
+- **ストレージ**: Supabase Storage
 
 ---
 
@@ -122,8 +120,8 @@ Database_Final/
 
 ## 📡 API ドキュメント
 
-バックエンド実行時：`http://localhost:8000/docs`  
-本番環境：https://memolucky-backend.onrender.com/docs
+- **本番環境**: https://memolucky-backend.onrender.com/docs
+- **ローカル環境**: `http://localhost:8000/docs`
 
 ### 主要エンドポイント
 - **認証**: `/api/auth/register`, `/api/auth/login`, `/api/auth/me`
@@ -148,8 +146,6 @@ Database_Final/
 
 ### GitHub Pages 404 エラー
 - HashRouter を使用しているため、URL は `/#/profile` 形式（自動リダイレクト）
-
-詳細は [データベース接続トラブルシューティング](docs/Infra/database-connection-troubleshooting.md) を参照。
 
 ---
 
@@ -177,7 +173,6 @@ Database_Final/
 
 ### インフラ
 - [デプロイメントガイド](docs/Infra/deployment.md)
-- [ストレージ設定](docs/Infra/quick-storage-setup.md)
 
 ---
 
@@ -204,9 +199,12 @@ Database_Final/
 
 ## 🔗 リンク
 
-- **公開アプリケーション**: https://syokan00.github.io/Database_Final/
+### 🌐 公開 URL
+- **📱 アプリケーション**: https://syokan00.github.io/Database_Final/
+- **📚 API ドキュメント**: https://memolucky-backend.onrender.com/docs
+
+### 💻 開発・リソース
 - **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
-- **本番 API**: https://memolucky-backend.onrender.com/docs
 
 ---
 
