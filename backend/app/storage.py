@@ -120,33 +120,28 @@ def _init_supabase() -> Tuple[Optional[object], bool]:
             return None, False
         
         print(f"   Creating Supabase client with URL: {SUPABASE_URL[:30]}...")
-        # Use create_client with explicit options to avoid proxy parameter issue
-        # Some versions have issues with proxy parameter being passed incorrectly
+        # Workaround for proxy parameter issue: Use Client directly instead of create_client
+        # The proxy error is caused by version incompatibility between supabase and gotrue
+        # Using Client directly with minimal options avoids this issue
         try:
-            # Try standard create_client first
+            from supabase.client import Client as SupabaseClient, ClientOptions
+            options = ClientOptions(
+                schema="public",
+                auto_refresh_token=False,
+                persist_session=False,
+            )
+            client = SupabaseClient(
+                supabase_url=SUPABASE_URL,
+                supabase_key=SUPABASE_KEY,
+                options=options
+            )
+            print("   Supabase client created successfully (using direct Client initialization)")
+        except Exception as e:
+            # Fallback to create_client if direct Client fails
+            print(f"   Direct Client initialization failed: {e}")
+            print("   Attempting fallback with create_client...")
             client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-            print("   Supabase client created successfully")
-        except TypeError as e:
-            if "proxy" in str(e).lower():
-                print(f"   ⚠️  proxy parameter error detected: {e}")
-                print("   Attempting workaround: creating client with ClientOptions...")
-                # Workaround: Use Client directly with ClientOptions
-                from supabase.client import Client, ClientOptions
-                options = ClientOptions(
-                    schema="public",
-                    auto_refresh_token=False,
-                    persist_session=False,
-                    local_storage=None,
-                    headers=None,
-                )
-                client = Client(
-                    supabase_url=SUPABASE_URL,
-                    supabase_key=SUPABASE_KEY,
-                    options=options
-                )
-                print("   Supabase client created successfully (using workaround)")
-            else:
-                raise
+            print("   Supabase client created successfully (using create_client fallback)")
         
         # 测试连接 - 尝试列出 buckets
         try:
