@@ -7,9 +7,6 @@ const client = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    validateStatus: function (status) {
-        return status < 500; // Don't throw on 4xx errors
-    },
 });
 
 // Add a request interceptor to include the token
