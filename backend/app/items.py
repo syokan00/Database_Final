@@ -99,11 +99,12 @@ def delete_item(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
+    """删除商品（仅作者或管理员）"""
     item = db.query(models.Item).filter(models.Item.id == id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     
-    if item.user_id != current_user.id:
+    if item.user_id != current_user.id and getattr(current_user, "role", "user") != "admin":
         raise HTTPException(status_code=403, detail="Not authorized to delete this item")
         
     db.delete(item)
