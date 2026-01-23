@@ -118,8 +118,9 @@ Database_Final/
 
 ---
 
-## ドキュメント
-
+## ドキュメント(提出物)
+### プレゼン資料
+- [プレゼン資料](docs/PM/app-overview.md)
 ### プロジェクト管理
 - [アプリケーション概要](docs/PM/app-overview.md)
 - [プロジェクト報告書](docs/PM/project-report.md)
