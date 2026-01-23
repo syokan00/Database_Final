@@ -120,7 +120,7 @@ Database_Final/
 
 ## ドキュメント(提出物)
 ### プレゼンテーション資料
-- [プレゼンテーション資料](Database_Final/luckyfouru.pdf)
+- [プレゼンテーション資料](/luckyfouru.pdf)
 ### プロジェクト管理
 - [アプリケーション概要](docs/PM/app-overview.md)
 - [プロジェクト報告書](docs/PM/project-report.md)
