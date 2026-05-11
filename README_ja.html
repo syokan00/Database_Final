@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MemoLucky — プロジェクト説明（ルビ付き）</title>
+<style>
+  :root{--primary:#2563eb;--accent:#7c3aed;--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--green:#16a34a;--red:#dc2626;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;padding:24px}
+  .page{max-width:860px;margin:0 auto}
+  header{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;padding:36px 32px;border-radius:16px;margin-bottom:28px}
+  header h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+  header p{opacity:.88;font-size:1rem}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .badge{background:rgba(255,255,255,.18);color:#fff;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:600}
+  h2{font-size:1.25rem;font-weight:700;color:var(--primary);margin:28px 0 12px;padding-left:10px;border-left:4px solid var(--primary)}
+  h3{font-size:1rem;font-weight:700;margin:18px 0 8px;color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th{background:#f1f5f9;text-align:left;padding:9px 12px;font-weight:600;border-bottom:2px solid var(--border)}
+  td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  code,pre{font-family:'Cascadia Code','Fira Code',monospace;background:#f1f5f9;border-radius:6px;font-size:.85rem}
+  code{padding:2px 6px}
+  pre{padding:16px;overflow-x:auto;margin:10px 0;line-height:1.6}
+  ruby{ruby-align:center}
+  rt{font-size:.6em;color:var(--muted)}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;background:#f8fafc;border-radius:8px;margin:10px 0;font-size:.9rem}
+  .flow-box{background:var(--primary);color:#fff;padding:6px 14px;border-radius:8px;font-weight:600}
+  .flow-arrow{color:var(--muted);font-size:1.2rem}
+  .flow-box.green{background:var(--green)}
+  .flow-box.purple{background:var(--accent)}
+  .highlight{background:#fef9c3;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.92rem}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>MemoLucky</h1>
+  <p><ruby>大学生<rt>だいがくせい</rt></ruby><ruby>専用<rt>せんよう</rt></ruby>キャンパス<ruby>コミュニティ<rt>community</rt></ruby>プラットフォーム</p>
+  <div class="badges">
+    <span class="badge">React 19</span>
+    <span class="badge">FastAPI</span>
+    <span class="badge">PostgreSQL</span>
+    <span class="badge">Redis</span>
+    <span class="badge">Docker</span>
+    <span class="badge">GitHub Actions</span>
+  </div>
+</header>
+
+<h2>🎯 <ruby>背景<rt>はいけい</rt></ruby>・<ruby>目的<rt>もくてき</rt></ruby></h2>
+<div class="card">
+  <p>
+    <ruby>大学生<rt>だいがくせい</rt></ruby>が<ruby>学習<rt>がくしゅう</rt></ruby>・<ruby>就職活動<rt>しゅうしょくかつどう</rt></ruby>・<ruby>校内生活<rt>こうないせいかつ</rt></ruby>で<ruby>蓄積<rt>ちくせき</rt></ruby>した<ruby>経験<rt>けいけん</rt></ruby>を
+    <ruby>共有<rt>きょうゆう</rt></ruby>できる<ruby>専用<rt>せんよう</rt></ruby>プラットフォームが<ruby>存在<rt>そんざい</rt></ruby>しませんでした。
+    MemoLucky は「<ruby>経験談<rt>けいけんだん</rt></ruby>の<ruby>投稿<rt>とうこう</rt></ruby>」「<ruby>学内<rt>がくない</rt></ruby>フリマ」「<ruby>通知<rt>つうち</rt></ruby>」を
+    1つの Web アプリに<ruby>統合<rt>とうごう</rt></ruby>し、<ruby>複数<rt>ふくすう</rt></ruby>のサービスを<ruby>行き来<rt>いきき</rt></ruby>する<ruby>手間<rt>てま</rt></ruby>を<ruby>解消<rt>かいしょう</rt></ruby>します。
+  </p>
+</div>
+
+<h2>✨ <ruby>主な機能<rt>おもなきのう</rt></ruby></h2>
+<div class="card">
+<table>
+  <tr><th><ruby>機能<rt>きのう</rt></ruby></th><th><ruby>説明<rt>せつめい</rt></ruby></th></tr>
+  <tr><td>📝 <ruby>経験談<rt>けいけんだん</rt></ruby><ruby>投稿<rt>とうこう</rt></ruby></td><td><ruby>タグ<rt>tag</rt></ruby>・<ruby>匿名<rt>とくめい</rt></ruby>・<ruby>画像添付<rt>がぞうてんぷ</rt></ruby>・<ruby>多言語<rt>たげんご</rt></ruby><ruby>対応<rt>たいおう</rt></ruby></td></tr>
+  <tr><td>🛍️ フリマ</td><td><ruby>商品出品<rt>しょうひんしゅっぴん</rt></ruby>・<ruby>購入申請<rt>こうにゅうしんせい</rt></ruby>・<ruby>出品者<rt>しゅっぴんしゃ</rt></ruby>との<ruby>チャット<rt>chat</rt></ruby></td></tr>
+  <tr><td>🔔 <ruby>通知<rt>つうち</rt></ruby></td><td><ruby>いいね<rt>いいね</rt></ruby>・<ruby>コメント<rt>comment</rt></ruby>・<ruby>フォロー<rt>follow</rt></ruby>・メッセージの<ruby>即時通知<rt>そくじつうち</rt></ruby></td></tr>
+  <tr><td>🏆 バッジ</td><td><ruby>初投稿<rt>はつとうこう</rt></ruby>・<ruby>連続投稿<rt>れんぞくとうこう</rt></ruby>など 8<ruby>種類<rt>しゅるい</rt></ruby>の<ruby>実績<rt>じっせき</rt></ruby></td></tr>
+  <tr><td>💬 DM</td><td><ruby>商品売主<rt>しょうひんうりぬし</rt></ruby>との<ruby>直接<rt>ちょくせつ</rt></ruby>メッセージ</td></tr>
+  <tr><td>🌍 <ruby>多言語<rt>たげんご</rt></ruby></td><td><ruby>日本語<rt>にほんご</rt></ruby> / English <ruby>切替<rt>きりかえ</rt></ruby></td></tr>
+</table>
+</div>
+
+<h2>🏗️ システム<ruby>構成<rt>こうせい</rt></ruby></h2>
+<div class="card">
+  <div class="flow">
+    <div class="flow-box">React 19<br><small><ruby>フロントエンド<rt>frontend</rt></ruby></small></div>
+    <div class="flow-arrow">→ REST API →</div>
+    <div class="flow-box green">FastAPI<br><small><ruby>バックエンド<rt>backend</rt></ruby></small></div>
+    <div class="flow-arrow">↓</div>
+  </div>
+  <div class="flow" style="margin-top:4px">
+    <div class="flow-box" style="background:#16a34a">PostgreSQL<br><small>DB</small></div>
+    <div class="flow-box" style="background:#dc2626">Redis<br><small><ruby>キャッシュ<rt>cache</rt></ruby></small></div>
+    <div class="flow-box" style="background:#d97706">MinIO<br><small><ruby>ストレージ<rt>storage</rt></ruby></small></div>
+    <div class="flow-box purple">Celery<br><small><ruby>非同期<rt>ひどうき</rt></ruby></small></div>
+  </div>
+  <div class="highlight" style="margin-top:14px">
+    💡 Celery が<ruby>非同期<rt>ひどうき</rt></ruby>でバッジ<ruby>付与<rt>ふよ</rt></ruby>を<ruby>処理<rt>しょり</rt></ruby>するため、<ruby>投稿<rt>とうこう</rt></ruby>APIの<ruby>応答速度<rt>おうとうそくど</rt></ruby>に<ruby>影響<rt>えいきょう</rt></ruby>しません。
+  </div>
+</div>
+
+<h2>🛠️ <ruby>技術<rt>ぎじゅつ</rt></ruby>スタック</h2>
+<div class="card">
+<table>
+  <tr><th><ruby>層<rt>そう</rt></ruby></th><th><ruby>技術<rt>ぎじゅつ</rt></ruby></th></tr>
+  <tr><td><ruby>フロントエンド<rt>frontend</rt></ruby></td><td>React 19.2, Vite 7.2, React Router v7, Axios</td></tr>
+  <tr><td><ruby>バックエンド<rt>backend</rt></ruby></td><td>FastAPI 0.104, SQLAlchemy 2.0, Pydantic v2</td></tr>
+  <tr><td>DB</td><td>PostgreSQL 15</td></tr>
+  <tr><td><ruby>キャッシュ<rt>cache</rt></ruby>/<ruby>制限<rt>せいげん</rt></ruby></td><td>Redis 7</td></tr>
+  <tr><td><ruby>ストレージ<rt>storage</rt></ruby></td><td>MinIO（S3<ruby>互換<rt>ごかん</rt></ruby>）</td></tr>
+  <tr><td><ruby>認証<rt>にんしょう</rt></ruby></td><td>JWT + Argon2<ruby>ハッシュ<rt>hash</rt></ruby></td></tr>
+  <tr><td><ruby>インフラ<rt>infra</rt></ruby></td><td>Docker Compose, GitHub Actions, GitHub Pages</td></tr>
+</table>
+</div>
+
+<h2>🚀 <ruby>起動方法<rt>きどうほうほう</rt></ruby></h2>
+<div class="card">
+<pre>git clone https://github.com/syokan00/Database_Final.git
+cp backend/env.example backend/.env
+docker compose up -d
+cd frontend &amp;&amp; npm install &amp;&amp; npm run dev</pre>
+  <p><ruby>起動後<rt>きどうご</rt></ruby>、<code>http://localhost:5173</code> でアクセス<ruby>可能<rt>かのう</rt></ruby>です。</p>
+</div>
+
+<footer>MemoLucky · MIT License · <a href="https://syokan00.github.io/Database_Final/">Live Demo</a></footer>
+</div>
+</body>
+</html>

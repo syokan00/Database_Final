@@ -1,187 +1,255 @@
-# MemoLucky 🍀
+# MemoLucky — 大学生向けキャンパスコミュニティプラットフォーム
 
-**Lucky for you — あなたに届く、誰かの経験。**
+<div align="center">
 
-> 大学生向けキャンパスライフ支援プラットフォーム
+![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-[![Live Demo](https://img.shields.io/badge/Demo-公開中-brightgreen)](https://syokan00.github.io/Database_Final/)
-[![GitHub](https://img.shields.io/badge/GitHub-リポジトリ-blue)](https://github.com/syokan00/Database_Final)
+**投稿・フリマ・研究室・就活情報をひとつに集約した大学生専用コミュニティ**
 
----
+[🌐 Live Demo](https://syokan00.github.io/Database_Final/) · [📖 ドキュメント](#documentation) · [🚀 クイックスタート](#quick-start)
 
-## プロジェクト概要
-
-**MemoLucky** は、大学生がキャンパスライフで必要な情報を共有し、助け合えるコミュニティを構築するフルスタック Web アプリケーションです。
-
-**"Lucky for you — あなたに届く、誰かの経験。"**
-
----
-
-## 主要機能
-
-### 経験談共有（Notes）
-- 投稿作成・閲覧、タグ・カテゴリ・キーワードで検索
-- いいね、お気に入り、コメント機能
-- 画像・添付ファイル対応、匿名投稿
-
-### キャンパスフリマ（Items）
-- 中古品の出品・購入（教科書、家電など）
-- カテゴリ・ステータス・価格でフィルタリング
-- 出品アイテムの編集・削除
-
-### 研究室情報（Labs）
-- 各研究室の情報と体験談を閲覧
-
-### 就活情報（Jobs）
-- 先輩の就活体験談・面接情報を閲覧
-
-### ユーザー管理
-- JWT 認証、プロフィール管理（アバター、カバー画像、自己紹介）
-- フォロー・フォロワーシステム
-
-### 通知システム
-- いいね、コメント、フォロー、メッセージのリアルタイム通知
-- 既読/未読管理、通知センター
-
-### メッセージング・チャット
-- アイテム専用チャット
-
-### バッジシステム
-- 活動に応じたバッジ獲得（初投稿、夜更かしの秀才、継続の達人など）
-
-### PWA
-- モバイルアプリとしてインストール可能、オフラインサポート
+</div>
 
 ---
 
-## 技術スタック
+## 📸 スクリーンショット
 
-### フロントエンド
-- **React** 19.2.0 + **Vite** 7.2.4
-- **React Router** 7.9.6 (HashRouter)
-- **Axios** 1.13.2
-- **Context API** (状態管理)
+| ホーム（投稿フィード） | フリマ出品一覧 | 通知センター |
+|---|---|---|
+| *(screenshot)* | *(screenshot)* | *(screenshot)* |
 
-### バックエンド
-- **FastAPI** 0.104.1 + **Uvicorn** 0.24.0
-- **PostgreSQL** + **SQLAlchemy** 2.0.23
-- **Pydantic** 2.9.2 (データバリデーション)
-- **JWT** + **Argon2** (認証・セキュリティ)
-- **Bleach** 6.1.0 (HTML サニタイゼーション)
+| プロフィール & バッジ | DM メッセージ | 多言語対応 |
+|---|---|---|
+| *(screenshot)* | *(screenshot)* | *(screenshot)* |
 
-### ストレージ・キャッシュ
-- **Supabase Storage** / **MinIO** (オブジェクトストレージ)
-- **Redis** 5.0.1 (キャッシュ・レート制限、オプション)
-
-### インフラ
-- **GitHub Pages** (フロントエンド)
-- **Render** (バックエンド・データベース)
-- **Docker** + **Docker Compose**
-- **GitHub Actions** (CI/CD)
+> **🎮 今すぐ体験**: [https://syokan00.github.io/Database_Final/](https://syokan00.github.io/Database_Final/)
 
 ---
 
-## デプロイメント
+## ✨ 主な機能
 
-### 本番環境
-- **フロントエンド**: [GitHub Pages](https://syokan00.github.io/Database_Final/)
-- **バックエンド**: Render.com
-- **データベース**: Render PostgreSQL
-- **ストレージ**: Supabase Storage
+### 👤 ユーザー管理
+- JWT 認証（Argon2 パスワードハッシュ）
+- プロフィール / アバター / カバー画像
+- フォロー & フォロワー管理
+
+### 📝 経験談投稿
+- Markdown 対応のリッチ投稿
+- タグ & 匿名投稿サポート
+- いいね・コメント・画像添付
+
+### 🛍️ フリマ（学内フリーマーケット）
+- 商品出品・購入申請フロー
+- 出品者とのダイレクトチャット
+- カテゴリ別フィルタリング
+
+### 🏆 バッジ & 実績システム
+- 初投稿・連続投稿・夜型ユーザーなど 8 種類のバッジ
+- Celery 非同期タスクによるリアルタイム付与
+
+### 🔔 通知システム
+- いいね・コメント・フォロー・メッセージを即座に通知
+- 未読バッジ表示 & 一括既読処理
+
+### 🌍 多言語対応
+- 日本語 / English（i18n フレームワーク実装済み）
+
+### 🔒 セキュリティ
+- Redis によるレート制限（API スロットリング）
+- bleach による XSS 対策（HTML サニタイズ）
+- CORS 設定 & JWT 有効期限管理
 
 ---
 
-## 📁 プロジェクト構成
+## 🏗️ システムアーキテクチャ
+
+```mermaid
+graph TB
+    subgraph Client["クライアント層"]
+        Browser["Web ブラウザ"]
+    end
+
+    subgraph Frontend["フロントエンド (GitHub Pages)"]
+        React["React 19 + Vite"]
+        Router["React Router v7"]
+        i18n["i18n (ja/en)"]
+    end
+
+    subgraph Backend["バックエンド (FastAPI)"]
+        API["REST API"]
+        Auth["JWT 認証"]
+        RateLimit["レート制限"]
+        Celery["Celery Worker"]
+    end
+
+    subgraph Storage["データ層"]
+        PG["PostgreSQL 15"]
+        Redis["Redis 7"]
+        MinIO["MinIO (S3互換)"]
+    end
+
+    Browser -->|HTTPS| React
+    React -->|REST API| API
+    API --> Auth
+    API --> RateLimit
+    RateLimit --> Redis
+    API --> PG
+    API --> MinIO
+    API -->|非同期タスク| Celery
+    Celery --> PG
+    Celery --> Redis
+```
+
+---
+
+## 🗄️ データベース設計（主要テーブル）
+
+```
+users ─────────┬──< posts ──< comments
+               │         └──< likes
+               ├──< items ──< item_messages
+               ├──< follows
+               ├──< notifications
+               └──< badges (user_badges)
+```
+
+| テーブル | 説明 |
+|---|---|
+| `users` | ユーザー情報・プロフィール |
+| `posts` | 経験談投稿（タグ・添付・匿名対応） |
+| `items` | フリマ出品商品 |
+| `comments` | 投稿コメント |
+| `follows` | フォロー関係 |
+| `notifications` | 通知（いいね・フォロー等） |
+| `badges` / `user_badges` | バッジ定義 & 付与記録 |
+| `messages` | ダイレクトメッセージ |
+
+---
+
+## 🛠️ 技術スタック
+
+| レイヤー | 技術 |
+|---|---|
+| **フロントエンド** | React 19.2, Vite 7.2, React Router 7, Axios, Lucide React |
+| **バックエンド** | FastAPI 0.104, SQLAlchemy 2.0, Pydantic v2 |
+| **データベース** | PostgreSQL 15 |
+| **キャッシュ / 制限** | Redis 7 |
+| **オブジェクトストレージ** | MinIO (S3 互換) |
+| **非同期タスク** | Celery 5.3 |
+| **認証** | JWT (python-jose) + Argon2 |
+| **インフラ** | Docker Compose, GitHub Actions, GitHub Pages |
+
+---
+
+## 🚀 クイックスタート
+
+### 必要環境
+- Docker & Docker Compose
+- Node.js 18+
+
+### 1. リポジトリをクローン
+
+```bash
+git clone https://github.com/syokan00/Database_Final.git
+cd Database_Final
+```
+
+### 2. 環境変数を設定
+
+```bash
+cp backend/env.example backend/.env
+# .env を編集して SECRET_KEY などを設定
+```
+
+### 3. Docker で起動
+
+```bash
+docker compose up -d
+```
+
+### 4. フロントエンドをローカル起動
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+ブラウザで `http://localhost:5173` にアクセス
+
+### デフォルトサービスポート
+
+| サービス | URL |
+|---|---|
+| フロントエンド (dev) | http://localhost:5173 |
+| FastAPI | http://localhost:8000 |
+| API ドキュメント | http://localhost:8000/docs |
+| PostgreSQL | localhost:5432 |
+| Redis | localhost:6379 |
+| MinIO Console | http://localhost:9001 |
+
+---
+
+## 📂 プロジェクト構成
 
 ```
 Database_Final/
-├── frontend/              # React フロントエンド
-│   ├── src/
-│   │   ├── components/    # UI コンポーネント
-│   │   ├── contexts/      # Context API
-│   │   ├── pages/         # ページコンポーネント
-│   │   └── api/           # API クライアント
-│   └── public/            # 静的アセット
-├── backend/               # FastAPI バックエンド
-│   ├── app/
-│   │   ├── main.py        # エントリーポイント
-│   │   ├── models.py      # データベースモデル
-│   │   ├── auth.py        # 認証
-│   │   ├── posts.py       # 投稿 API
-│   │   ├── items.py       # アイテム API
-│   │   ├── uploads.py     # ファイルアップロード
-│   │   └── storage.py     # ストレージ抽象化
-│   └── requirements.txt
-├── docs/                  # プロジェクトドキュメント
-└── README.md
+├── frontend/               # React + Vite SPA
+│   └── src/
+│       ├── components/     # 共通UIコンポーネント
+│       ├── contexts/       # Context API (Auth, Notification)
+│       ├── pages/          # ページコンポーネント
+│       ├── i18n/           # 多言語定義 (ja/en)
+│       └── utils/          # ユーティリティ
+├── backend/                # FastAPI アプリ
+│   └── app/
+│       ├── auth.py         # JWT認証
+│       ├── posts.py        # 投稿API
+│       ├── items.py        # フリマAPI
+│       ├── badges.py       # バッジAPI
+│       ├── notifications.py# 通知API
+│       ├── messages.py     # DM API
+│       └── celery_app.py   # 非同期タスク
+├── database/               # DBマイグレーション
+├── docs/                   # 設計ドキュメント
+│   ├── BA/                 # ビジネス分析 (ペルソナ, ストーリー)
+│   ├── Architect/          # アーキテクチャ設計
+│   ├── DBA/                # DB設計 (ER図)
+│   ├── Infra/              # インフラ設計
+│   └── PM/                 # プロジェクト管理
+└── docker-compose.yml
 ```
 
 ---
 
-## ドキュメント(提出物)
-### プレゼンテーション資料
-- [プレゼンテーション資料](/luckyfouru.pdf)
-### プロジェクト管理
-- [アプリケーション概要](docs/PM/app-overview.md)
-- [プロジェクト報告書](docs/PM/project-report.md)
-- [デモ動画](docs/PM/demo-video.md)
+## 📖 ドキュメント <a id="documentation"></a>
 
-### ビジネス分析
-- [ペルソナ](docs/BA/persona.md)
-- [モチベーショングラフ](docs/BA/motivation-graph.md)
-- [ストーリーボード](docs/BA/storyboard.md)
-- [UI モック](docs/BA/ui-mock.md)
-
-### システムアーキテクチャ
-- [システムアーキテクチャ](docs/Architect/system-architecture.md)
-- [RPO/RTO 定義](docs/Architect/rpo-rto.md)
-- [DR/バックアップ戦略](docs/Architect/dr-backup.md)
-- [パフォーマンス指標](docs/Architect/performance.md)
-
-### データベース
-- [ER 図](docs/DBA/er-diagram.md)
-
-### インフラ
-- [デプロイメントガイド](docs/Infra/deployment.md)
+| カテゴリ | 内容 |
+|---|---|
+| [BA / ビジネス分析](docs/BA/) | ペルソナ・モチベーショングラフ・ストーリーボード |
+| [アーキテクチャ](docs/Architect/) | システム構成・DR バックアップ・RPO/RTO |
+| [DB 設計](docs/DBA/) | ER 図・インデックス設計・パーティション戦略 |
+| [インフラ](docs/Infra/) | Docker 設定・GitHub Actions・デプロイ手順 |
+| [PM](docs/PM/) | WBS・マイルストーン・リスク管理 |
 
 ---
 
-## セキュリティ
+## 🧪 テスト
 
-- **Argon2** パスワードハッシュ
-- **JWT** トークンベース認証
-- **SQLAlchemy ORM** (SQL インジェクション対策)
-- **Pydantic** データバリデーション
-- **Bleach** HTML サニタイゼーション
-- **CORS** 設定
-- **Redis** レート制限（オプション）
+```bash
+cd backend
+pip install pytest pytest-asyncio httpx
+pytest tests/ -v
+```
 
 ---
 
-## メンバー（luckyfouru）
+## 📄 ライセンス
 
-- **2442043** - 杉浦芙美子
-- **2442053** - 竹髙 結衣
-- **2442097** - 林 子嫻
-- **2442103** - 小栗 花音
-
----
-
-## リンク
-
-### 公開 URL
-- **アプリケーション**: https://syokan00.github.io/Database_Final/
-- **API ドキュメント**: https://memolucky-backend.onrender.com/docs
-
-### 開発・リソース
-- **GitHub リポジトリ**: https://github.com/syokan00/Database_Final
-
----
-
-## ライセンス
-
-このプロジェクトは教育目的で作成されました。
-
----
-
-**MemoLucky** - Lucky for you — あなたに届く、誰かの経験。🍀
+MIT License — [LICENSE](LICENSE)
