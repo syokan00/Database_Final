@@ -16,19 +16,6 @@
 
 </div>
 
----
-
-## 📸 スクリーンショット
-
-| ホーム（投稿フィード） | フリマ出品一覧 | 通知センター |
-|---|---|---|
-| *(screenshot)* | *(screenshot)* | *(screenshot)* |
-
-| プロフィール & バッジ | DM メッセージ | 多言語対応 |
-|---|---|---|
-| *(screenshot)* | *(screenshot)* | *(screenshot)* |
-
-> **🎮 今すぐ体験**: [https://syokan00.github.io/Database_Final/](https://syokan00.github.io/Database_Final/)
 
 ---
 
@@ -248,8 +235,3 @@ pip install pytest pytest-asyncio httpx
 pytest tests/ -v
 ```
 
----
-
-## 📄 ライセンス
-
-MIT License — [LICENSE](LICENSE)
